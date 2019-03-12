@@ -44,6 +44,10 @@ function createConfig(outPath, entryPoint, options, ...plugins) {
                 },
                 {
                     test: /\.css$/,
+                    loader: 'css-loader'
+                },
+                {
+                    test: /\.module.css$/,
                     loader: 'css-loader',
                     query: {
                       modules: true,
@@ -113,7 +117,7 @@ const manifest = new CopyWebpackPlugin([{
  * 
  * This embeds the package version into the source file as a string constant.
  */
-const version = new webpack.DefinePlugin({PACKAGE_VERSION});
+const version = new webpack.DefinePlugin({PACKAGE_VERSION: `'${PACKAGE_VERSION}'`});
 
 module.exports = {
     createConfig,

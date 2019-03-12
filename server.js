@@ -195,7 +195,7 @@ async function createWebpackMiddleware() {
         // Load config and set development mode
         const config = require(process.cwd()+ '/webpack.config.js');
         config.forEach(entry => entry.mode = (entry.mode || mode));
-        console.log(config, mode);
+        
         // Create express middleware
         const compiler = webpack(config);
         const middleware = webpackDevMiddleware(compiler, {
