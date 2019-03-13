@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const {getProjectConfig} = require('../../utils');
+const {getProjectConfig} = require('../../src/utils/utils');
 const {PORT, CDN_LOCATION} = getProjectConfig();
 
 /**
