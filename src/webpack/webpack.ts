@@ -1,30 +1,40 @@
-const path = require('path');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const {getProjectConfig, getProjectPackageJson} = require('./utils');
+import * as webpack from 'webpack';
+import * as CopyWebpackPlugin from 'copy-webpack-plugin';
+import {getProjectConfig} from '../utils/getProjectConfig';
+import {getProjectPackageJson} from '../utils/getProjectPackageJson';
 
 const {SERVICE_NAME, PORT} = getProjectConfig();
 const PACKAGE_VERSION = getProjectPackageJson().version;
 
 /**
- * Shared function to create a webpack config for an entry point
- * 
- * Options ('options' object is optional, as are all members within):
- *  - minify {boolean}
- *      If webpack should minify this module
- *      Defaults to true
- *  - isLibrary {boolean}
- *      If the resulting module should inject itself into the window object to make 
- *      itself easily accessible within HTML.
- *      Defaults to false
- *  - plugins {...object[]}
- *      Optional list of plugins to add to the config object
- *      Defaults to empty list
- *  - outputFilename {string}
- *      Allows a custom output file name to be used instead of the default [name]-bundle.js
+ * Custom options which can be passed into webpack.
  */
-function createConfig(outPath, entryPoint, options, ...plugins) {
-    const config = {
+export interface CustomWebpackOptions extends webpack.Options.Optimization {
+    /**
+     * If webpack should minify this module. Defaults to true.
+     */
+     minify?: boolean;
+     /**
+      * If the resulting module should inject itself into the window object to make itself easily accessible within HTML.  Defaults to false.
+      * 
+      * Should be used in combination with the 'libraryName' option.
+      */
+     isLibrary?: boolean;
+     /**
+      * Sets the global variable name for the library on the window.  Required to have 'isLibrary' enabled.
+      */
+     libraryName?: string;
+     /**
+      * Allows a custom output file name to be used instead of the default [name]-bundle.js
+      */
+     outputFilename?: string;
+ }
+
+ /**
+  * Shared function to create a webpack config for an entry point
+  */
+export function createConfig(outPath: string, entryPoint: string, options: CustomWebpackOptions, ...plugins: webpack.Plugin[]) {
+    const config: webpack.Configuration = {
         entry: entryPoint,
         optimization: {
             minimize: !options || options.minify !== false
@@ -76,14 +86,14 @@ function createConfig(outPath, entryPoint, options, ...plugins) {
 
     if (options && options.isLibrary === true) {
         if (!!options.libraryName) {
-            config.output.library = options.libraryName;
+            config.output!.library = options.libraryName;
         } else {
-            config.output.library = '[name]';
+            config.output!.library = '[name]';
         }
-        config.output.libraryTarget = 'umd';
+        config.output!.libraryTarget = 'umd';
     }
     if (plugins && plugins.length) {
-        config.plugins.push.apply(config.plugins, plugins);
+        config.plugins!.push.apply(config.plugins, plugins);
     }
 
     return config;
@@ -93,7 +103,7 @@ function createConfig(outPath, entryPoint, options, ...plugins) {
  * Provider temporarily requires an extra plugin to override index.html within provider app.json
  * Will be removed once the RVM supports relative paths within app.json files
  */
-const manifest = new CopyWebpackPlugin([{
+export const manifestPlugin = new CopyWebpackPlugin([{
     from: './res/provider/app.json',
     to: '.',
     transform: (content) => {
@@ -117,12 +127,4 @@ const manifest = new CopyWebpackPlugin([{
  * 
  * This embeds the package version into the source file as a string constant.
  */
-const version = new webpack.DefinePlugin({PACKAGE_VERSION: `'${PACKAGE_VERSION}'`});
-
-module.exports = {
-    createConfig,
-    plugins : {
-        version,
-        manifest
-    }
-}
+export const versionPlugin = new webpack.DefinePlugin({PACKAGE_VERSION: `'${PACKAGE_VERSION}'`});
