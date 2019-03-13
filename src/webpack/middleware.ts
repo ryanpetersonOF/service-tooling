@@ -120,7 +120,22 @@ export function createCustomManifestMiddleware(): RequestHandler {
         }
 
         const query: {[key: string]: string} = req.query;
-        const {uuid, url, frame, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight, realmName, enableMesh, runtime, useService, provider, config} = {
+        const {
+            uuid,
+            url,
+            frame,
+            defaultCentered,
+            defaultLeft,
+            defaultTop,
+            defaultWidth,
+            defaultHeight,
+            realmName,
+            enableMesh,
+            runtime,
+            useService,
+            provider,
+            config
+        } = {
             // Set default values
             uuid: `demo-app-${Math.random().toString(36).substr(2, 4)}`,
             url: `http://localhost:${PORT}/demo/testbed/index.html`,
@@ -128,10 +143,10 @@ export function createCustomManifestMiddleware(): RequestHandler {
             provider: 'local',
             config: null,
             realmName: null,
-            
+
             // Override with query args
             ...query,
-            
+
             // Special handling for any non-string args (both parses query string args, and defines default values)
             frame: req.query.frame !== 'false',
             enableMesh: req.query.enableMesh !== 'false',
@@ -144,27 +159,13 @@ export function createCustomManifestMiddleware(): RequestHandler {
         };
 
         const manifest = {
-            startup_app: {
-                uuid,
-                name: uuid,
-                url,
-                frame,
-                autoShow: true,
-                saveWindowState: false,
-                defaultCentered,
-                defaultLeft,
-                defaultTop,
-                defaultWidth,
-                defaultHeight
-            },
-            runtime: {
-                arguments: "--v=1" + (realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''),
-                version: runtime
-            }, 
+            startup_app:
+                {uuid, name: uuid, url, frame, autoShow: true, saveWindowState: false, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight},
+            runtime: {arguments: '--v=1' + (realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''), version: runtime},
             services: {}
         };
         if (useService) {
-            const service: serviceDeclaration = {name: 'layouts'};
+            const service: serviceDeclaration = {name: `${SERVICE_NAME}`};
 
             if (provider !== 'default') {
                 service.manifestUrl = getProviderUrl(provider);

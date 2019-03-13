@@ -1,6 +1,10 @@
-import * as program from 'commander';
-import { startServer } from './server/server';
+#!/usr/bin/env node
 
+import * as program from 'commander';
+import {startServer} from './server/server';
+import * as webpack from './webpack/webpack';
+
+export {webpack};
 export interface CLIArguments {
     /**
      * Chooses which version of the provider to run against. Will default to building and running a local version of the provider.
@@ -46,26 +50,24 @@ export interface CLIArguments {
 
 /**
  * Starts the build + server process, passing in any provided CLI arguments.
- * @param args 
+ * @param args
  */
-function startCommandProcess(args: CLIArguments & {launch: boolean}) {
+function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
         providerVersion: args.providerVersion || 'local',
         mode: args.mode || 'development',
-        launchApp: args.launch || true,
+        launchApp: args.launchApp || true,
         static: args.static || false,
         writeToDisk: args.writeToDisk || false
     };
 
     startServer(sanitizedArgs);
-
 }
 
-program
-    .command('start', 'Starts your project by building and running on a local server')
+program.command('start')
     .option('-v, --providerVersion <version>', 'Sets the runtime version for the provider.  Defaults to "local".', 'local')
     .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".', 'development')
-    .option('-l, --launch', 'Launches the server and application once built.  Defaults to true.', true)
+    .option('-l, --launchApp', 'Launches the server and application once built.  Defaults to true.', true)
     .option('-s, --static', 'Launches the server and application using pre-built files.  Defaults to false.', false)
     .option('-w, --write', 'Writes and serves the built files from disk.  Defaults to false.', false)
     .action(startCommandProcess);
