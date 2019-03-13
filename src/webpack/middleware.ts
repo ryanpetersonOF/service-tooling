@@ -118,7 +118,8 @@ export function createCustomManifestMiddleware(): RequestHandler {
         if (!defaultConfig) {
             return;
         }
-        //@ts-ignore Need help here
+
+        const query: {[key: string]: string} = req.query;
         const {uuid, url, frame, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight, realmName, enableMesh, runtime, useService, provider, config} = {
             // Set default values
             uuid: `demo-app-${Math.random().toString(36).substr(2, 4)}`,
@@ -126,10 +127,11 @@ export function createCustomManifestMiddleware(): RequestHandler {
             runtime: defaultConfig.runtime.version,
             provider: 'local',
             config: null,
-
+            realmName: null,
+            
             // Override with query args
-            ...req.query,
-
+            ...query,
+            
             // Special handling for any non-string args (both parses query string args, and defines default values)
             frame: req.query.frame !== 'false',
             enableMesh: req.query.enableMesh !== 'false',

@@ -1,3 +1,6 @@
+import * as program from 'commander';
+import { startServer } from './server/server';
+
 export interface CLIArguments {
     /**
      * Chooses which version of the provider to run against. Will default to building and running a local version of the provider.
@@ -40,3 +43,13 @@ export interface CLIArguments {
      */
     writeToDisk: boolean;
 }
+
+const testArgs:CLIArguments = {
+    writeToDisk: false,
+    static: false,
+    launchApp: false,
+    mode: "development",
+    providerVersion: "local"
+};
+
+startServer(testArgs);

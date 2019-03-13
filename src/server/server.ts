@@ -43,37 +43,37 @@ async function createServer(args: CLIArguments) {
 }
 
 export async function startServer(args: CLIArguments) {
-    const app = await createServer(args);
+    // const app = await createServer(args);
 
-    console.log('Starting application server...');
-    app.listen(PORT, async () => {
-        // Manually start service on Mac OS (no RVM support)
-        if (platform() === 'darwin') {
-            console.log('Starting Provider for Mac OS');
+    // console.log('Starting application server...');
+    // app.listen(PORT, async () => {
+    //     // Manually start service on Mac OS (no RVM support)
+    //     if (platform() === 'darwin') {
+    //         console.log('Starting Provider for Mac OS');
 
-            // Launch latest stable version of the service
-            await launch({manifestUrl: getProviderUrl(args.providerVersion)}).catch(console.log);
-        }
+    //         // Launch latest stable version of the service
+    //         await launch({manifestUrl: getProviderUrl(args.providerVersion)}).catch(console.log);
+    //     }
 
-        // Launch application, if requested to do so
-        if (args.launchApp) {
-            const manifestPath = 'demo/app.json';
+    //     // Launch application, if requested to do so
+    //     if (args.launchApp) {
+    //         const manifestPath = 'demo/app.json';
 
-            console.log('Launching application');
-            connect({uuid: 'wrapper', manifestUrl: `http://localhost:${PORT}/${manifestPath}`}).then(async fin => {
-                const service = fin.Application.wrapSync({uuid: `${SERVICE_NAME}`, name: `${SERVICE_NAME}`});
+    //         console.log('Launching application');
+    //         connect({uuid: 'wrapper', manifestUrl: `http://localhost:${PORT}/${manifestPath}`}).then(async fin => {
+    //             const service = fin.Application.wrapSync({uuid: `${SERVICE_NAME}`, name: `${SERVICE_NAME}`});
 
-                // Terminate local server when the demo app closes
-                service
-                    .addListener(
-                        'closed',
-                        async () => {
-                            process.exit(0);
-                        })
-                    .catch(console.error);
-            }, console.error);
-        } else {
-            console.log('Local server running');
-        }
-    });
+    //             // Terminate local server when the demo app closes
+    //             service
+    //                 .addListener(
+    //                     'closed',
+    //                     async () => {
+    //                         process.exit(0);
+    //                     })
+    //                 .catch(console.error);
+    //         }, console.error);
+    //     } else {
+    //         console.log('Local server running');
+    //     }
+    // });
 }
