@@ -1,7 +1,7 @@
 export interface CLIArguments {
     /**
      * Chooses which version of the provider to run against. Will default to building and running a local version of the provider.
-     * 
+     *
      * - "local"
      *   Starts a local version of the provider, built from the code in 'src/provider'
      * - "stable"
@@ -16,11 +16,11 @@ export interface CLIArguments {
     /**
      * The mode to use for webpack, either 'development' (default) or 'production'.
      */
-    mode: "development" | "production" | "none";
+    mode: 'development'|'production'|'none';
 
     /**
      * If the demo application should be launched after building (default: true).
-     * 
+     *
      * Otherwise will build and start the local server, but not automatically launch any applications.
      */
     launchApp: boolean;
@@ -28,7 +28,7 @@ export interface CLIArguments {
     /**
      * Rather than building the application via webpack (and then watching for any source file changes), will launch the
      * provider from pre-built code within the 'dist' directory.
-     * 
+     *
      * You should first build the provider using either 'npm run build' or 'npm run build:dev'. This option has no effect if
      * '--version' is set to anything other than 'local'.
      */

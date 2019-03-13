@@ -1,17 +1,17 @@
+import * as archiver from 'archiver';
 import {createWriteStream} from 'fs';
 import {resolve} from 'path';
-import * as archiver from 'archiver';
 
 import {getProjectConfig} from '../utils/getProjectConfig';
 
 const {SERVICE_NAME} = getProjectConfig();
-const output = createWriteStream(resolve(process.cwd(), 'dist','provider',`${SERVICE_NAME}-service.zip`));
+const output = createWriteStream(resolve(process.cwd(), 'dist', 'provider', `${SERVICE_NAME}-service.zip`));
 const archive = archiver('zip', {zlib: {level: 9}});
 
 output.on('close', () => {
     console.log(`Zip file created at '${output.path}'`);
     console.log(`${archive.pointer()} total bytes written`);
-})
+});
 
 archive.pipe(output);
 

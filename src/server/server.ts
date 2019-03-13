@@ -1,15 +1,16 @@
 import * as express from 'express';
-import { createAppJsonMiddleware, createWebpackMiddleware, createCustomManifestMiddleware } from '../webpack/middleware';
-import {launch, connect} from 'hadouken-js-adapter';
-import { getProjectConfig } from '../utils/getProjectConfig';
-import { CLIArguments } from '..';
+import {connect, launch} from 'hadouken-js-adapter';
 import {platform} from 'os';
-import { getProviderUrl } from '../utils/getProviderUrl';
+
+import {CLIArguments} from '..';
+import {getProjectConfig} from '../utils/getProjectConfig';
+import {getProviderUrl} from '../utils/getProviderUrl';
+import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
 
 const {PORT, SERVICE_NAME, CDN_LOCATION} = getProjectConfig();
 /**
  * Adds the necessary middleware to the express instance
- * 
+ *
  * - Will serve static resources from the 'res' directory
  * - Will serve application code from the 'src' directory
  *   - Uses webpack middleware to first build the application
@@ -49,7 +50,7 @@ export async function startServer(args: CLIArguments) {
         // Manually start service on Mac OS (no RVM support)
         if (platform() === 'darwin') {
             console.log('Starting Provider for Mac OS');
-        
+
             // Launch latest stable version of the service
             await launch({manifestUrl: getProviderUrl(args.providerVersion)}).catch(console.log);
         }
@@ -63,9 +64,13 @@ export async function startServer(args: CLIArguments) {
                 const service = fin.Application.wrapSync({uuid: `${SERVICE_NAME}`, name: `${SERVICE_NAME}`});
 
                 // Terminate local server when the demo app closes
-                service.addListener('closed', async () => {
-                    process.exit(0);
-                }).catch(console.error);
+                service
+                    .addListener(
+                        'closed',
+                        async () => {
+                            process.exit(0);
+                        })
+                    .catch(console.error);
             }, console.error);
         } else {
             console.log('Local server running');

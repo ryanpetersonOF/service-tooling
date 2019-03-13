@@ -1,16 +1,16 @@
-import { getProjectConfig } from "./getProjectConfig";
+import {getProjectConfig} from './getProjectConfig';
 
 const {PORT, CDN_LOCATION} = getProjectConfig();
 
 /**
  * Returns the URL of the manifest file for the requested version of the service.
- * 
+ *
  * @param {string} version Version number of the service, or a channel
  * @param {string} manifestUrl The URL that was set in the application manifest (if any). Any querystring arguments will be persisted, but the rest of the URL will be ignored.
  */
 export function getProviderUrl(version: string, manifestUrl?: string) {
-    const index = (manifestUrl && manifestUrl.indexOf("?")) || -1;
-    const query = manifestUrl && index >= 0 ? manifestUrl.substr(index) : "";
+    const index = (manifestUrl && manifestUrl.indexOf('?')) || -1;
+    const query = manifestUrl && index >= 0 ? manifestUrl.substr(index) : '';
 
     if (version === 'local') {
         // Provider is running locally

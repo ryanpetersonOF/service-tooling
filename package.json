@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
     "check": "gts check",
     "clean": "gts clean",
-    "posttest": "npm run check",
+    "fix": "gts fix",
+    "prepack": "npm run clean && npm run build && tsc -p src/client/tsconfig.types.json",
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "start": "node server.js"
+    "watch": "webpack --watch --mode development",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

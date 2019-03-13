@@ -1,11 +1,11 @@
+import {NextFunction, Request, RequestHandler, Response} from 'express-serve-static-core';
+import * as path from 'path';
 import * as webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
-import * as path from 'path';
-import {getJsonFile} from '../utils/getJsonFile';
 
-import {RequestHandler ,Request, Response, NextFunction} from 'express-serve-static-core';
-import { getProjectConfig } from '../utils/getProjectConfig';
-import { getProviderUrl } from '../utils/getProviderUrl';
+import {getJsonFile} from '../utils/getJsonFile';
+import {getProjectConfig} from '../utils/getProjectConfig';
+import {getProviderUrl} from '../utils/getProviderUrl';
 
 const {PORT, SERVICE_NAME, CDN_LOCATION} = getProjectConfig();
 
@@ -13,47 +13,36 @@ const {PORT, SERVICE_NAME, CDN_LOCATION} = getProjectConfig();
  * Quick implementation on the app.json, for the pieces we use.
  */
 type ManifestFile = {
-    startup_app: {
-        url: string, 
-        uuid: string, 
-        name: string
-    },
-    runtime: {
-        arguments: string,
-        version: string
-    }
+    startup_app: {url: string, uuid: string, name: string},
+    runtime: {arguments: string, version: string}
     services?: serviceDeclaration[]
 };
 
 type serviceDeclaration = {
-        name: string, 
-        manifestUrl?: string,
-        config?: {}
+    name: string,
+    manifestUrl?: string,
+    config?: {}
 };
-
 
 
 
 /**
  * Creates express-compatible middleware function to serve webpack modules.
- * 
+ *
  * Wrapper will immediately terminate the server if the initial build fails.
- * 
+ *
  * This is a wrapper around the webpack-dev-middleware utility.
  */
-export async function createWebpackMiddleware(mode: "development" | "production" | "none", writeToDisk: boolean): Promise<RequestHandler> {
+export async function createWebpackMiddleware(mode: 'development'|'production'|'none', writeToDisk: boolean): Promise<RequestHandler> {
     return new Promise<RequestHandler>((resolve) => {
         // Load config and set development mode
-        const config: webpack.Configuration[] = require(process.cwd()+ '/webpack.config.js');
+        const config: webpack.Configuration[] = require(process.cwd() + '/webpack.config.js');
 
         config.forEach((entry: webpack.Configuration) => entry.mode = (entry.mode || mode));
-        
+
         // Create express middleware
         const compiler = webpack(config);
-        const middleware = webpackDevMiddleware(compiler, {
-            publicPath: '/',
-            writeToDisk
-        });
+        const middleware = webpackDevMiddleware(compiler, {publicPath: '/', writeToDisk});
 
         // Wait until initial build has finished before starting application
         const startTime = Date.now();
@@ -85,13 +74,13 @@ export async function createWebpackMiddleware(mode: "development" | "production"
  */
 export function createAppJsonMiddleware(providerVersion: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
-        const configPath = req.params[0];           // app.json path, relative to 'res' dir
-        const component = configPath.split('/')[0]; // client, provider or demo
+        const configPath = req.params[0];            // app.json path, relative to 'res' dir
+        const component = configPath.split('/')[0];  // client, provider or demo
 
         // Parse app.json
         const config: ManifestFile|void = await getJsonFile<ManifestFile>(path.resolve('res', configPath)).catch(next);
 
-        if(!config){
+        if (!config) {
             return;
         }
 
@@ -118,18 +107,17 @@ export function createAppJsonMiddleware(providerVersion: string): RequestHandler
 
 /**
  * Creates express-compatible middleware function to generate custom application manifests.
- * 
- * Differs from createAppJsonMiddleware (defined in server.js), as this spawns custom demo windows, rather than 
+ *
+ * Differs from createAppJsonMiddleware (defined in server.js), as this spawns custom demo windows, rather than
  * re-writing existing demo/provider manifests.
  */
 export function createCustomManifestMiddleware(): RequestHandler {
     return async (req, res, next) => {
         const defaultConfig = await getJsonFile<ManifestFile>(path.resolve('./res/demo/app.json')).catch(next);
 
-        if(!defaultConfig) {
+        if (!defaultConfig) {
             return;
         }
-
         //@ts-ignore Need help here
         const {uuid, url, frame, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight, realmName, enableMesh, runtime, useService, provider, config} = {
             // Set default values
