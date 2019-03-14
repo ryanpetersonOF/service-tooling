@@ -14,11 +14,17 @@ Extracts out common build and server components which can be shared across diffe
 
 ## API
 * openfin-service-base start [...options]
-    - --v, --providerVersion <version>: 'Sets the runtime version for the provider.  Defaults to "local".
-    - --m, --mode <mode>: 'Sets the webpack mode.  Defaults to "development".
-    - --l, --launchApp: 'Launches the server and application once built.  Defaults to true.
-    - --s, --static: 'Launches the server and application using pre-built files.  Defaults to false.
-    - --w, --write: 'Writes and serves the built files from disk.  Defaults to false.
+    Starts the build and serves the project.
+
+    - Options: 
+        - --v, --providerVersion <version>: 'Sets the runtime version for the provider.  Defaults to "local".
+        - --m, --mode <mode>: 'Sets the webpack mode.  Defaults to "development".
+        - --l, --launchApp: 'Launches the server and application once built.  Defaults to true.
+        - --s, --static: 'Launches the server and application using pre-built files.  Defaults to false.
+        - --w, --write: 'Writes and serves the built files from disk.  Defaults to false.
+
+* openfin-service-base zip
+    Zips the project.
 
 * Exports
     - webpack

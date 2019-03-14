@@ -2,7 +2,7 @@ import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
 import * as fetch from 'node-fetch';
 import {platform} from 'os';
-import {CLIArguments} from '..';
+import { CLIArguments } from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
