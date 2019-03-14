@@ -56,9 +56,9 @@ function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
         providerVersion: args.providerVersion || 'local',
         mode: args.mode || 'development',
-        launchApp: args.launchApp || true,
-        static: args.static || false,
-        writeToDisk: args.writeToDisk || false
+        launchApp: args.launchApp === undefined ? true : args.launchApp,
+        static: args.static === undefined ? false : args.static,
+        writeToDisk: args.writeToDisk === undefined ? false : args.writeToDisk
     };
 
     startServer(sanitizedArgs);
