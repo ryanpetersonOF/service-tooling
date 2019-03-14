@@ -6,6 +6,7 @@ import * as webpackDevMiddleware from 'webpack-dev-middleware';
 import {getJsonFile} from '../utils/getJsonFile';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
+import {getRootDirectory} from '../utils/getRootDirectory';
 
 /**
  * Quick implementation on the app.json, for the pieces we use.
@@ -34,7 +35,7 @@ type serviceDeclaration = {
 export async function createWebpackMiddleware(mode: 'development'|'production'|'none', writeToDisk: boolean): Promise<RequestHandler> {
     return new Promise<RequestHandler>((resolve) => {
         // Load config and set development mode
-        const config: webpack.Configuration[] = require(process.cwd() + '/webpack.config.js');
+        const config: webpack.Configuration[] = require(getRootDirectory() + '/webpack.config.js');
 
         config.forEach((entry: webpack.Configuration) => entry.mode = (entry.mode || mode));
 
@@ -50,7 +51,7 @@ export async function createWebpackMiddleware(mode: 'development'|'production'|'
 
             // Output build times
             const buildTimes = results.stats.map(stat => {
-                const component = path.relative(process.cwd() + '/dist', stat.compilation.outputOptions.path);
+                const component = path.relative(getRootDirectory() + '/dist', stat.compilation.outputOptions.path);
                 return `${component}: ${(stat.endTime!.valueOf() - stat.startTime!.valueOf()) / 1000}s`;
             });
             console.log(`\nInitial build complete after ${(Date.now() - startTime) / 1000} seconds\n    ${buildTimes.join('\n    ')}\n`);

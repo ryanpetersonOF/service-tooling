@@ -2,9 +2,11 @@ import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
 import * as fetch from 'node-fetch';
 import {platform} from 'os';
-import { CLIArguments } from '../types';
+
+import {CLIArguments} from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
+import {getRootDirectory} from '../utils/getRootDirectory';
 import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
 
 /**
@@ -27,12 +29,12 @@ async function createServer(args: CLIArguments) {
     app.use('/manifest', createCustomManifestMiddleware());
 
     // Add route for serving static resources
-    app.use(express.static(process.cwd() + '/res'));
+    app.use(express.static(getRootDirectory() + '/res'));
 
     // Add route for code
     if (args.static) {
         // Run application using pre-built code (use 'npm run build' or 'npm run build:dev')
-        app.use(express.static(process.cwd() + '/dist'));
+        app.use(express.static(getRootDirectory() + '/dist'));
     } else {
         // Run application using webpack-dev-middleware. Will build app before launching, and watch for any source file changes
         app.use(await createWebpackMiddleware(args.mode, args.writeToDisk));
@@ -67,9 +69,10 @@ export async function startServer(args: CLIArguments) {
             if (fetchRequest.status === 200) {
                 const providerManifestContent = await fetchRequest.json();
                 console.log('Launching application');
-                
+
                 connect({uuid: 'wrapper', manifestUrl}).then(async fin => {
-                    const service = fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
+                    const service =
+                        fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
 
                     // Terminate local server when the provider closes
                     service

@@ -3,10 +3,11 @@ import {createWriteStream} from 'fs';
 import {resolve} from 'path';
 
 import {getProjectConfig} from '../utils/getProjectConfig';
+import {getRootDirectory} from '../utils/getRootDirectory';
 
 export function createZipProvider() {
     const {SERVICE_NAME} = getProjectConfig();
-    const output = createWriteStream(resolve(process.cwd(), 'dist', 'provider', `${SERVICE_NAME}-service.zip`));
+    const output = createWriteStream(resolve(getRootDirectory(), 'dist', 'provider', `${SERVICE_NAME}-service.zip`));
     const archive = archiver('zip', {zlib: {level: 9}});
 
     output.on('close', () => {
@@ -17,10 +18,9 @@ export function createZipProvider() {
     archive.pipe(output);
 
     // Include all provider res files except app.json (which is also in dist)
-    archive.glob('**/!(app.json)', {cwd: resolve(process.cwd(), 'res', 'provider')});
+    archive.glob('**/!(app.json)', {cwd: resolve(getRootDirectory(), 'res', 'provider')});
     // Include all provider dist files except the zip itself
-    archive.glob('**/*.!(zip)', {cwd: resolve(process.cwd(), 'dist', 'provider')});
+    archive.glob('**/*.!(zip)', {cwd: resolve(getRootDirectory(), 'dist', 'provider')});
 
     archive.finalize();
 }
-

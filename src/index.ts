@@ -3,8 +3,8 @@
 import * as program from 'commander';
 import {startServer} from './server/server';
 import * as webpack from './webpack/webpack';
-import { CLIArguments } from './types';
-import { createZipProvider } from './scripts/createProviderZip';
+import {CLIArguments} from './types';
+import {createZipProvider} from './scripts/createProviderZip';
 
 export {webpack};
 
@@ -39,8 +39,7 @@ program.command('start')
     .option('-w, --writeToDisk', 'Writes and serves the built files from disk.  Defaults to false.', true)
     .action(startCommandProcess);
 
-program.command('zip')
-    .action(zipCommandProcess);
+program.command('zip').action(zipCommandProcess);
 
 program.parse(process.argv);
 
