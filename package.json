@@ -14,7 +14,7 @@
     "start": "node index.js"
   },
   "files": [
-    "dist/client",
+    "dist",
     "README.md"
   ],
   "repository": {

@@ -60,18 +60,18 @@ export async function startServer(args: CLIArguments) {
             const manifestPath = 'demo/app.json';
             const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
-            const fetchRequest = await fetch.default(manifestUrl).catch((err: string) => {
+            const fetchRequest = await fetch.default(getProviderUrl(args.providerVersion)).catch((err: string) => {
                 throw new Error(err);
             });
 
             if (fetchRequest.status === 200) {
-                const manifestContent = await fetchRequest.json();
+                const providerManifestContent = await fetchRequest.json();
                 console.log('Launching application');
-
+                
                 connect({uuid: 'wrapper', manifestUrl}).then(async fin => {
-                    const service = fin.Application.wrapSync({uuid: `${manifestContent.startup_app.uuid}`, name: `${manifestContent.startup_app.name}`});
+                    const service = fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
 
-                    // Terminate local server when the demo app closes
+                    // Terminate local server when the provider closes
                     service
                         .addListener(
                             'closed',

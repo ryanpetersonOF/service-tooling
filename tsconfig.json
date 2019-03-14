@@ -7,7 +7,7 @@
         "lib": ["dom", "es2017"],
         "types": ["node", "openfin"],
         "jsx": "react",
-        "sourceMap": true,
+        "sourceMap": false,
         "declaration": false,
         "moduleResolution": "node"
     },
