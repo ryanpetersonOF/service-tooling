@@ -7,7 +7,6 @@ import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
 
-const {PORT, SERVICE_NAME} = getProjectConfig();
 /**
  * Adds the necessary middleware to the express instance
  *
@@ -44,6 +43,7 @@ async function createServer(args: CLIArguments) {
 
 export async function startServer(args: CLIArguments) {
     const app = await createServer(args);
+    const {PORT, SERVICE_NAME} = getProjectConfig();
 
     console.log('Starting application server...');
     app.listen(PORT, async () => {
@@ -58,7 +58,7 @@ export async function startServer(args: CLIArguments) {
         // Launch application, if requested to do so
         if (args.launchApp) {
             const manifestPath = 'demo/app.json';
-
+            console.log(SERVICE_NAME);
             console.log('Launching application');
             connect({uuid: 'wrapper', manifestUrl: `http://localhost:${PORT}/${manifestPath}`}).then(async fin => {
                 const service = fin.Application.wrapSync({uuid: `${SERVICE_NAME}`, name: `${SERVICE_NAME}`});

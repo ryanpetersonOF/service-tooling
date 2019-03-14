@@ -7,8 +7,6 @@ import {getJsonFile} from '../utils/getJsonFile';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 
-const {PORT, SERVICE_NAME, CDN_LOCATION} = getProjectConfig();
-
 /**
  * Quick implementation on the app.json, for the pieces we use.
  */
@@ -73,6 +71,8 @@ export async function createWebpackMiddleware(mode: 'development'|'production'|'
  * to the command-line options of this utility.
  */
 export function createAppJsonMiddleware(providerVersion: string): RequestHandler {
+    const {PORT, SERVICE_NAME, CDN_LOCATION} = getProjectConfig();
+
     return async (req: Request, res: Response, next: NextFunction) => {
         const configPath = req.params[0];            // app.json path, relative to 'res' dir
         const component = configPath.split('/')[0];  // client, provider or demo
@@ -112,6 +112,8 @@ export function createAppJsonMiddleware(providerVersion: string): RequestHandler
  * re-writing existing demo/provider manifests.
  */
 export function createCustomManifestMiddleware(): RequestHandler {
+    const {PORT, SERVICE_NAME} = getProjectConfig();
+
     return async (req, res, next) => {
         const defaultConfig = await getJsonFile<ManifestFile>(path.resolve('./res/demo/app.json')).catch(next);
 

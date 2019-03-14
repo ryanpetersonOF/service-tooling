@@ -4,9 +4,6 @@ import * as webpack from 'webpack';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProjectPackageJson} from '../utils/getProjectPackageJson';
 
-const {SERVICE_NAME, PORT} = getProjectConfig();
-const PACKAGE_VERSION = getProjectPackageJson().version;
-
 /**
  * Custom options which can be passed into webpack.
  */
@@ -71,23 +68,28 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
  * Provider temporarily requires an extra plugin to override index.html within provider app.json
  * Will be removed once the RVM supports relative paths within app.json files
  */
-export const manifestPlugin = new CopyWebpackPlugin([{
-    from: './res/provider/app.json',
-    to: '.',
-    transform: (content) => {
-        const config = JSON.parse(content);
+export const manifestPlugin = (() => {
+    const {SERVICE_NAME, PORT} = getProjectConfig();
 
-        if (typeof process.env.SERVICE_VERSION !== 'undefined' && process.env.SERVICE_VERSION !== '') {
-            config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';
-            config.startup_app.autoShow = false;
-        } else {
-            console.warn('Using \'npm run build\' (or build:dev) when running locally. Can debug without building first by running \'npm start\'.');
-            config.startup_app.url = `http://localhost:${PORT}/provider/provider.html`;
+    return new CopyWebpackPlugin([{
+        from: './res/provider/app.json',
+        to: '.',
+        transform: (content) => {
+            const config = JSON.parse(content);
+
+            if (typeof process.env.SERVICE_VERSION !== 'undefined' && process.env.SERVICE_VERSION !== '') {
+                config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';
+                config.startup_app.autoShow = false;
+            } else {
+                console.warn('Using \'npm run build\' (or build:dev) when running locally. Can debug without building first by running \'npm start\'.');
+                config.startup_app.url = `http://localhost:${PORT}/provider/provider.html`;
+            }
+
+            return JSON.stringify(config, null, 4);
         }
+    }]);
+})();
 
-        return JSON.stringify(config, null, 4);
-    }
-}]);
 
 /**
  * Replaces 'PACKAGE_VERSION' constant in source files with the current version of the service,
@@ -95,4 +97,8 @@ export const manifestPlugin = new CopyWebpackPlugin([{
  *
  * This embeds the package version into the source file as a string constant.
  */
-export const versionPlugin = new webpack.DefinePlugin({PACKAGE_VERSION: `'${PACKAGE_VERSION}'`});
+export const versionPlugin = (() => {
+    const PACKAGE_VERSION = getProjectPackageJson().version;
+
+    return new webpack.DefinePlugin({PACKAGE_VERSION: `'${PACKAGE_VERSION}'`});
+})();
