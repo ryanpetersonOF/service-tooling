@@ -1,11 +1,11 @@
 import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
 import {platform} from 'os';
-
 import {CLIArguments} from '..';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
+import * as fetch from 'node-fetch';
 
 /**
  * Adds the necessary middleware to the express instance
@@ -43,7 +43,7 @@ async function createServer(args: CLIArguments) {
 
 export async function startServer(args: CLIArguments) {
     const app = await createServer(args);
-    const {PORT, SERVICE_NAME} = getProjectConfig();
+    const {PORT} = getProjectConfig();
 
     console.log('Starting application server...');
     app.listen(PORT, async () => {
@@ -58,20 +58,29 @@ export async function startServer(args: CLIArguments) {
         // Launch application, if requested to do so
         if (args.launchApp) {
             const manifestPath = 'demo/app.json';
-            console.log(SERVICE_NAME);
-            console.log('Launching application');
-            connect({uuid: 'wrapper', manifestUrl: `http://localhost:${PORT}/${manifestPath}`}).then(async fin => {
-                const service = fin.Application.wrapSync({uuid: `${SERVICE_NAME}`, name: `${SERVICE_NAME}`});
+            const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
-                // Terminate local server when the demo app closes
-                service
-                    .addListener(
-                        'closed',
-                        async () => {
-                            process.exit(0);
-                        })
-                    .catch(console.error);
-            }, console.error);
+            const fetchRequest = await fetch.default(manifestUrl).catch((err: string) => { throw new Error(err); });
+
+            if(fetchRequest.status === 200) {
+                const manifestContent = await fetchRequest.json();
+                console.log('Launching application');
+
+                connect({uuid: 'wrapper', manifestUrl}).then(async fin => {
+                    const service = fin.Application.wrapSync({uuid: `${manifestContent.startup_app.uuid}`, name: `${manifestContent.startup_app.name}`});
+
+                    // Terminate local server when the demo app closes
+                    service
+                        .addListener(
+                            'closed',
+                            async () => {
+                                process.exit(0);
+                            })
+                        .catch(console.error);
+                }, console.error);
+            } else {
+                throw new Error(`Invalid response from server:  Status code: ${fetchRequest.status}`);
+            }
         } else {
             console.log('Local server running');
         }
