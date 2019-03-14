@@ -1,6 +1,6 @@
 {
   "name": "openfin-service-base",
-  "version": "0.2.96",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -13,6 +13,10 @@
     "watch": "webpack --watch --mode development",
     "start": "node index.js"
   },
+  "files": [
+    "dist/client",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": ""

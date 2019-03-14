@@ -1,11 +1,11 @@
 import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
+import * as fetch from 'node-fetch';
 import {platform} from 'os';
 import {CLIArguments} from '..';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
-import * as fetch from 'node-fetch';
 
 /**
  * Adds the necessary middleware to the express instance
@@ -60,9 +60,11 @@ export async function startServer(args: CLIArguments) {
             const manifestPath = 'demo/app.json';
             const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
-            const fetchRequest = await fetch.default(manifestUrl).catch((err: string) => { throw new Error(err); });
+            const fetchRequest = await fetch.default(manifestUrl).catch((err: string) => {
+                throw new Error(err);
+            });
 
-            if(fetchRequest.status === 200) {
+            if (fetchRequest.status === 200) {
                 const manifestContent = await fetchRequest.json();
                 console.log('Launching application');
 
