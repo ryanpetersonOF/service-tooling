@@ -7,11 +7,10 @@
     "check": "gts check",
     "clean": "gts clean",
     "fix": "gts fix",
-    "build": "webpack --mode production",
-    "build:dev": "webpack --mode development",
-    "prepack": "tsc -p tsconfig.json",
-    "watch": "webpack --watch --mode development",
-    "start": "node index.js"
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "test": "npm run build && cd test && npm run start",
+    "start": "npm run build && node dist/index.js start"
   },
   "files": [
     "dist",
