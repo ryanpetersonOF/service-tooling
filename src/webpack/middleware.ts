@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
 
+import {WebpackMode} from '../types';
 import {getJsonFile} from '../utils/getJsonFile';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
@@ -32,7 +33,7 @@ type serviceDeclaration = {
  *
  * This is a wrapper around the webpack-dev-middleware utility.
  */
-export async function createWebpackMiddleware(mode: 'development'|'production'|'none', writeToDisk: boolean): Promise<RequestHandler> {
+export async function createWebpackMiddleware(mode: WebpackMode, writeToDisk: boolean): Promise<RequestHandler> {
     return new Promise<RequestHandler>((resolve) => {
         // Load config and set development mode
         const config: webpack.Configuration[] = require(getRootDirectory() + '/webpack.config.js');
@@ -51,7 +52,7 @@ export async function createWebpackMiddleware(mode: 'development'|'production'|'
 
             // Output build times
             const buildTimes = results.stats.map(stat => {
-                const component = path.relative(getRootDirectory() + '/dist', stat.compilation.outputOptions.path);
+                const component = path.relative(getRootDirectory(), stat.compilation.outputOptions.path);
                 return `${component}: ${(stat.endTime!.valueOf() - stat.startTime!.valueOf()) / 1000}s`;
             });
             console.log(`\nInitial build complete after ${(Date.now() - startTime) / 1000} seconds\n    ${buildTimes.join('\n    ')}\n`);

@@ -1,4 +1,4 @@
-# OpenFin Service Build Tooling
+# OpenFin Service Tooling
 
 
 ## Overview
@@ -13,18 +13,25 @@ Extracts out common build and server components which can be shared across diffe
 * Common server and demo launching utils
 
 ## API
-* openfin-service-base start [...options]
+* svc-tools start [...options]
     Starts the build and serves the project.
 
     - Options: 
-        - --v, --providerVersion <version>: 'Sets the runtime version for the provider.  Defaults to "local".
-        - --m, --mode <mode>: 'Sets the webpack mode.  Defaults to "development".
-        - --l, --launchApp: 'Launches the server and application once built.  Defaults to true.
-        - --s, --static: 'Launches the server and application using pre-built files.  Defaults to false.
-        - --w, --write: 'Writes and serves the built files from disk.  Defaults to false.
+        - -v, --providerVersion <version>: Sets the runtime version for the provider.  Defaults to "local".
+        - -m, --mode <mode>: Sets the webpack mode.  Defaults to "development".
+        - -l, --launchApp: Launches the server and application once built.  Defaults to true.
+        - -s, --static: Launches the server and application using pre-built files.  Defaults to false.
+        - -w, --writeToDisk: Writes and serves the built files from disk.  Defaults to false.
 
-* openfin-service-base zip
+* svc-tools build [...options]
+    Invokes webpack to build the project.
+
+    - Options: 
+        - -m, --mode <mode>: Sets the webpack mode.  Defaults to "production".
+
+* svc-tools zip
     Zips the project.
+
 
 * Exports
     - webpack
@@ -44,13 +51,13 @@ Install as a node module to your existing service project.
 
 ### Setup
 
-- After installing, add a script to your projects package.json with the command: `openfin-service-base start` 
-- In your webpack.config.js, import `openfin-service-base` - this will expose the common webpack utils to create configurations and export.
+- After installing, add a script to your projects package.json with the command: `svc-tools start` 
+- In your webpack.config.js, import `openfin-service-tooling` - this will expose the common webpack utils to create configurations and export.
 
-You can then invoke `openfin-service-base start` added previously to build and serve your project.
+You can then invoke `svc-tools start` added previously to build and serve your project.
 
 ### Startup
-Once dependencies are installed and imported, you can invoke `openfin-service-base start` to build and serve your project.
+Once dependencies are installed and imported, you can invoke `svc-tools start` to build and serve your project.
 
 ## Known Issues
 A list of known issues will be here.

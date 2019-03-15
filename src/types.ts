@@ -16,7 +16,7 @@ export interface CLIArguments {
     /**
      * The mode to use for webpack, either 'development' (default) or 'production'.
      */
-    mode: 'development'|'production'|'none';
+    mode: WebpackMode;
 
     /**
      * If the demo application should be launched after building (default: true).
@@ -40,3 +40,12 @@ export interface CLIArguments {
      */
     writeToDisk: boolean;
 }
+
+export type BuildCommandArgs = {
+    mode: WebpackMode;
+};
+
+/**
+ * Available modes for webpack to run against.
+ */
+export type WebpackMode = 'development'|'production'|'none';
