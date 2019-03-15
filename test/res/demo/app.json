@@ -1,0 +1,22 @@
+{
+    "devtools_port": 9090,
+    "startup_app": {
+        "name": "test-launcher",
+        "url": "http://localhost:42319/demo/index.html",
+        "uuid": "test-launcher",
+        "autoShow": true,
+        "showTaskbarIcon": false,
+        "defaultHeight": 400,
+        "defaultWidth": 500
+    },
+    "services": [
+        {
+            "name": "fdc3",
+            "manifestUrl": "http://localhost:42319/provider/app.json"
+        }
+    ],
+    "runtime": {
+        "arguments": "--enable-aggressive-domstorage-flushing",
+        "version": "9.61.38.40"
+    }
+}

@@ -1,17 +1,16 @@
 {
-  "name": "openfin-service-base",
+  "name": "openfin-service-tooling",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "check": "gts check",
     "clean": "gts clean",
-    "fix": "gts fix",
-    "build": "webpack --mode production",
-    "build:dev": "webpack --mode development",
-    "prepack": "tsc -p tsconfig.json",
-    "watch": "webpack --watch --mode development",
-    "start": "node index.js"
+    "fix": "gts fix && cd test && gts fix",
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "test": "npm run build && cd test && npm run start",
+    "start": "npm run build && node dist/index.js start"
   },
   "files": [
     "dist",
@@ -27,7 +26,7 @@
     "url": ""
   },
   "bin": {
-    "openfin-service-base": "dist/index.js"
+    "svc-tools": "dist/index.js"
   },
   "homepage": "",
   "dependencies": {

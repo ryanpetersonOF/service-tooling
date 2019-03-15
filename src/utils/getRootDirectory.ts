@@ -13,5 +13,5 @@ export function getRootDirectory() {
         return rootDirectory;
     }
 
-    return rootDirectory = normalize(process.cwd());
+    return rootDirectory = process.cwd();
 }
