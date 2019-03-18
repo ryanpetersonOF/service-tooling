@@ -7,7 +7,9 @@ import {CLIArguments} from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 import {getRootDirectory} from '../utils/getRootDirectory';
-import {createAppJsonMiddleware, createCustomManifestMiddleware, createWebpackMiddleware} from '../webpack/middleware';
+import {executeWebpack} from '../webpack/executeWebpack';
+
+import {createAppJsonMiddleware, createCustomManifestMiddleware} from './middleware';
 
 /**
  * Adds the necessary middleware to the express instance
@@ -37,7 +39,7 @@ async function createServer(args: CLIArguments) {
         app.use(express.static(getRootDirectory() + '/dist'));
     } else {
         // Run application using webpack-dev-middleware. Will build app before launching, and watch for any source file changes
-        app.use(await createWebpackMiddleware(args.mode, args.writeToDisk));
+        app.use(await executeWebpack(args.mode, args.writeToDisk));
     }
 
     return app;
@@ -58,7 +60,7 @@ export async function startServer(args: CLIArguments) {
         }
 
         // Launch application, if requested to do so
-        if (args.launchApp) {
+        if (!args.noDemo) {
             const manifestPath = 'demo/app.json';
             const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
