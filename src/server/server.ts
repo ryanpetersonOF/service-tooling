@@ -7,7 +7,7 @@ import {CLIArguments} from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
 import {getRootDirectory} from '../utils/getRootDirectory';
-import {executeWebpack} from '../webpack/webpack';
+import {executeWebpack} from '../webpack/executeWebpack';
 
 import {createAppJsonMiddleware, createCustomManifestMiddleware} from './middleware';
 
