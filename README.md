@@ -13,7 +13,8 @@ Extracts out common build and server components which can be shared across diffe
 * Common server and demo launching utils
 
 ## API
-* svc-tools start [...options]
+* **svc-tools start [...options]**
+
     Starts the build and serves the project.
 
     - Options: 
@@ -23,17 +24,23 @@ Extracts out common build and server components which can be shared across diffe
         - -s, --static: Launches the server and application using pre-built files.  Defaults to false.
         - -w, --writeToDisk: Writes and serves the built files from disk.  Defaults to false.
 
-* svc-tools build [...options]
+* **svc-tools build [...options]**
+
     Invokes webpack to build the project.
 
     - Options: 
         - -m, --mode <mode>: Sets the webpack mode.  Defaults to "production".
 
-* svc-tools zip
+* **svc-tools zip**
+
+
     Zips the project.
 
 
-* Exports
+* **Exports**
+
+    These are exported by the project and can be used by importing the package.
+    
     - webpack
         - createConfig: Creates a webpack configuration
         - versionPlugin: Replaces 'PACKAGE_VERSION' constant in source files with the current version of the service
