@@ -10,17 +10,22 @@ import {executeWebpack} from './webpack/webpack';
  * Start command
  */
 program.command('start')
-    .option('-v, --providerVersion <version>', 'Sets the runtime version for the provider.  Defaults to "local".', 'local')
-    .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".', 'development')
-    .option('-l, --launchApp', 'Launches the server and application once built.  Defaults to true.', false)
-    .option('-s, --static', 'Launches the server and application using pre-built files.  Defaults to false.', true)
-    .option('-w, --writeToDisk', 'Writes and serves the built files from disk.  Defaults to false.', true)
+    .option(
+        '-v, --providerVersion <version>',
+        'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | w.x.y.z',
+        'local')
+    .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
+    .option('-l, --noDemo', 'Runs the server but will not launch the demo application.', true)
+    .option('-s, --static', 'Launches the server and application using pre-built files.', true)
+    .option('-w, --writeToDisk', 'Writes and serves the built files from disk.', true)
     .action(startCommandProcess);
 
 /**
  * Build command
  */
-program.command('build').action(buildCommandProcess).option('-m, --mode <mode>', 'Sets the webpack build mode.  Defaults to "production".', 'production');
+program.command('build')
+    .action(buildCommandProcess)
+    .option('-m, --mode <mode>', 'Sets the webpack build mode.  Defaults to "production". Options: development | production | none', 'production');
 
 /**
  * Zip command
@@ -43,7 +48,7 @@ function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
         providerVersion: args.providerVersion || 'local',
         mode: args.mode || 'development',
-        launchApp: args.launchApp === undefined ? true : false,
+        noDemo: args.noDemo === undefined ? false : true,
         static: args.static === undefined ? false : true,
         writeToDisk: args.writeToDisk === undefined ? false : true
     };

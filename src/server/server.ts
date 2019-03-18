@@ -60,7 +60,7 @@ export async function startServer(args: CLIArguments) {
         }
 
         // Launch application, if requested to do so
-        if (args.launchApp) {
+        if (!args.noDemo) {
             const manifestPath = 'demo/app.json';
             const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 

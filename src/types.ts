@@ -23,7 +23,7 @@ export interface CLIArguments {
      *
      * Otherwise will build and start the local server, but not automatically launch any applications.
      */
-    launchApp: boolean;
+    noDemo: boolean;
 
     /**
      * Rather than building the application via webpack (and then watching for any source file changes), will launch the
