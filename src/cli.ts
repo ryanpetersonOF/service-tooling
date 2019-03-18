@@ -4,7 +4,7 @@ import * as program from 'commander';
 import {startServer} from './server/server';
 import {CLIArguments, BuildCommandArgs} from './types';
 import {createZipProvider} from './scripts/createProviderZip';
-import {executeWebpack} from './webpack/webpack';
+import {executeWebpack} from './webpack/executeWebpack';
 
 /**
  * Start command
@@ -15,7 +15,7 @@ program.command('start')
         'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | w.x.y.z',
         'local')
     .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
-    .option('-l, --noDemo', 'Runs the server but will not launch the demo application.', true)
+    .option('-n, --noDemo', 'Runs the server but will not launch the demo application.', true)
     .option('-s, --static', 'Launches the server and application using pre-built files.', true)
     .option('-w, --writeToDisk', 'Writes and serves the built files from disk.', true)
     .action(startCommandProcess);
