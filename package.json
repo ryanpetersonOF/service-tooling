@@ -8,7 +8,7 @@
     "clean": "gts clean",
     "fix": "gts fix && cd demo && gts fix",
     "build": "tsc -p tsconfig.json",
-    "prepack": "npm run build",
+    "prepack": "npm run clean && npm run build",
     "demo": "npm run build && cd demo && npm run start",
     "demo:build": "npm run build && cd demo && npm run build",
     "start": "npm run build && node dist/cli.js start"
