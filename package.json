@@ -1,17 +1,17 @@
 {
   "name": "openfin-service-tooling",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "check": "gts check",
     "clean": "gts clean",
-    "fix": "gts fix && cd test && gts fix",
+    "fix": "gts fix && cd demo && gts fix",
     "build": "tsc -p tsconfig.json",
     "prepack": "npm run build",
-    "test": "npm run build && cd test && npm run start",
-    "test:build": "npm run build && cd test && npm run build",
-    "start": "npm run build && node dist/index.js start"
+    "demo": "npm run build && cd demo && npm run start",
+    "demo:build": "npm run build && cd demo && npm run build",
+    "start": "npm run build && node dist/cli.js start"
   },
   "files": [
     "dist",
@@ -32,6 +32,7 @@
   "homepage": "https://github.com/HadoukenIO/service-tooling",
   "dependencies": {
     "@types/openfin": "^39.0.1",
+    "acorn": "^6.1.1",
     "archiver": "^3.0.0",
     "commander": "^2.19.0",
     "copy-webpack-plugin": "^4.5.1",

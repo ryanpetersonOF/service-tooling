@@ -1,4 +1,4 @@
-const tooling = require('../dist/index').webpack;
+const tooling = require('../dist/index').webpackTools;
 const outputDir = __dirname + "/dist";
 
 module.exports = [
