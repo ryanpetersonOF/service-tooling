@@ -10,9 +10,10 @@ pipeline {
                 script {
                     GIT_SHORT_SHA = sh ( script: "git rev-parse --short HEAD", returnStdout: true ).trim()
                     PKG_VERSION = sh ( script: "node -pe \"require('./package.json').version\"", returnStdout: true ).trim()
-
                     BUILD_VERSION = PKG_VERSION + "-alpha." + env.BUILD_NUMBER
                 }
+
+                sh "npm run build"
                 sh "echo ${GIT_SHORT_SHA} > ./dist/SHA.txt"
 
                 withCredentials([string(credentialsId: "NPM_TOKEN_WRITE", variable: 'NPM_TOKEN')]) {
@@ -32,9 +33,10 @@ pipeline {
                 script {
                     GIT_SHORT_SHA = sh ( script: "git rev-parse --short HEAD", returnStdout: true ).trim()
                     PKG_VERSION = sh ( script: "node -pe \"require('./package.json').version\"", returnStdout: true ).trim()
-
                     BUILD_VERSION = PKG_VERSION
                 }
+
+                sh "npm run build"
                 sh "echo ${GIT_SHORT_SHA} > ./dist/SHA.txt"
 
                 withCredentials([string(credentialsId: "NPM_TOKEN_WRITE", variable: 'NPM_TOKEN')]) {
