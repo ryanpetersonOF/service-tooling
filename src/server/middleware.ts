@@ -9,6 +9,7 @@ import {getProviderUrl} from '../utils/getProviderUrl';
  * Quick implementation on the app.json, for the pieces we use.
  */
 type ManifestFile = {
+    licenseKey: string,
     startup_app: {url: string, uuid: string, name: string},
     runtime: {arguments: string, version: string}
     services?: serviceDeclaration[]
@@ -91,7 +92,8 @@ export function createCustomManifestMiddleware(): RequestHandler {
             runtime,
             useService,
             provider,
-            config
+            config,
+            licenseKey
         } = {
             // Set default values
             uuid: `demo-app-${Math.random().toString(36).substr(2, 4)}`,
@@ -112,10 +114,12 @@ export function createCustomManifestMiddleware(): RequestHandler {
             defaultLeft: Number.parseInt(req.query.defaultLeft, 10) || 860,
             defaultTop: Number.parseInt(req.query.defaultTop, 10) || 605,
             defaultWidth: Number.parseInt(req.query.defaultWidth, 10) || 860,
-            defaultHeight: Number.parseInt(req.query.defaultHeight, 10) || 605
+            defaultHeight: Number.parseInt(req.query.defaultHeight, 10) || 605,
+            licenseKey: defaultConfig.licenseKey
         };
 
         const manifest = {
+            licenseKey,
             startup_app:
                 {uuid, name: uuid, url, frame, autoShow: true, saveWindowState: false, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight},
             runtime: {arguments: '--v=1' + (realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''), version: runtime},
