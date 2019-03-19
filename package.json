@@ -31,7 +31,6 @@
   },
   "homepage": "https://github.com/HadoukenIO/service-tooling",
   "dependencies": {
-    "@types/openfin": "^39.0.1",
     "acorn": "^6.1.1",
     "archiver": "^3.0.0",
     "commander": "^2.19.0",

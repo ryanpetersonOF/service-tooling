@@ -5,7 +5,7 @@
         "outDir": "dist",
         "rootDir": "src",
         "lib": ["dom", "es2017"],
-        "types": ["node", "openfin"],
+        "types": ["node"],
         "jsx": "react",
         "sourceMap": false,
         "declaration": false,
