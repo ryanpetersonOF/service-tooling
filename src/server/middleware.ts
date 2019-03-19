@@ -1,18 +1,15 @@
 import {NextFunction, Request, RequestHandler, Response} from 'express-serve-static-core';
 import * as path from 'path';
-import * as webpack from 'webpack';
-import * as webpackDevMiddleware from 'webpack-dev-middleware';
 
-import {WebpackMode} from '../types';
 import {getJsonFile} from '../utils/getJsonFile';
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProviderUrl} from '../utils/getProviderUrl';
-import {getRootDirectory} from '../utils/getRootDirectory';
 
 /**
  * Quick implementation on the app.json, for the pieces we use.
  */
 type ManifestFile = {
+    licenseKey: string,
     startup_app: {url: string, uuid: string, name: string},
     runtime: {arguments: string, version: string}
     services?: serviceDeclaration[]
@@ -24,49 +21,6 @@ type serviceDeclaration = {
     config?: {}
 };
 
-
-
-/**
- * Creates express-compatible middleware function to serve webpack modules.
- *
- * Wrapper will immediately terminate the server if the initial build fails.
- *
- * This is a wrapper around the webpack-dev-middleware utility.
- */
-export async function createWebpackMiddleware(mode: WebpackMode, writeToDisk: boolean): Promise<RequestHandler> {
-    return new Promise<RequestHandler>((resolve) => {
-        // Load config and set development mode
-        const config: webpack.Configuration[] = require(getRootDirectory() + '/webpack.config.js');
-
-        config.forEach((entry: webpack.Configuration) => entry.mode = (entry.mode || mode));
-
-        // Create express middleware
-        const compiler = webpack(config);
-        const middleware = webpackDevMiddleware(compiler, {publicPath: '/', writeToDisk});
-
-        // Wait until initial build has finished before starting application
-        const startTime = Date.now();
-        middleware.waitUntilValid((result) => {
-            // result is actually {stats: webpack.Stats[]}, but the type reports it as only webpack.Stats;
-            const results = result as unknown as {stats: webpack.Stats[]};
-
-            // Output build times
-            const buildTimes = results.stats.map(stat => {
-                const component = path.relative(getRootDirectory(), stat.compilation.outputOptions.path);
-                return `${component}: ${(stat.endTime!.valueOf() - stat.startTime!.valueOf()) / 1000}s`;
-            });
-            console.log(`\nInitial build complete after ${(Date.now() - startTime) / 1000} seconds\n    ${buildTimes.join('\n    ')}\n`);
-
-            // Check build status
-            if (results.stats.find(stats => stats.compilation.errors.length > 0)) {
-                console.error('Build failed. See output above.');
-                process.exit(1);
-            } else {
-                resolve(middleware);
-            }
-        });
-    });
-}
 
 /**
  * Creates express-compatible middleware function that will add/replace any URL's found within app.json files according
@@ -138,7 +92,8 @@ export function createCustomManifestMiddleware(): RequestHandler {
             runtime,
             useService,
             provider,
-            config
+            config,
+            licenseKey
         } = {
             // Set default values
             uuid: `demo-app-${Math.random().toString(36).substr(2, 4)}`,
@@ -159,10 +114,12 @@ export function createCustomManifestMiddleware(): RequestHandler {
             defaultLeft: Number.parseInt(req.query.defaultLeft, 10) || 860,
             defaultTop: Number.parseInt(req.query.defaultTop, 10) || 605,
             defaultWidth: Number.parseInt(req.query.defaultWidth, 10) || 860,
-            defaultHeight: Number.parseInt(req.query.defaultHeight, 10) || 605
+            defaultHeight: Number.parseInt(req.query.defaultHeight, 10) || 605,
+            licenseKey: defaultConfig.licenseKey
         };
 
         const manifest = {
+            licenseKey,
             startup_app:
                 {uuid, name: uuid, url, frame, autoShow: true, saveWindowState: false, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight},
             runtime: {arguments: '--v=1' + (realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''), version: runtime},

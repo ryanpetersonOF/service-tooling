@@ -1,0 +1,9 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node ../dist/cli.js start",
+    "build": "node ../dist/cli.js build"
+  }
+}
