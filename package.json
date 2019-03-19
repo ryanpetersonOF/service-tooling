@@ -58,6 +58,12 @@
     "@types/node": "^9.4.6",
     "@types/node-fetch": "^2.1.6",
     "@types/webpack": "^4.4.25",
-    "@types/webpack-dev-middleware": "^2.0.2"
+    "@types/webpack-dev-middleware": "^2.0.2",
+    "pre-commit": "^1.2.2"
+  },
+  "precommit": {
+    "run": [
+      "check"
+    ]
   }
 }
