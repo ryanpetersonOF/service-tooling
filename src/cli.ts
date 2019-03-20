@@ -12,8 +12,9 @@ import {executeWebpack} from './webpack/executeWebpack';
 program.command('start')
     .option(
         '-v, --providerVersion <version>',
-        'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | w.x.y.z',
+        'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | x.y.z',
         'local')
+    .option('-r, --runtime <version>', 'Sets the runtime version.  Options: stable | w.x.y.z', 'stable')
     .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
     .option('-n, --noDemo', 'Runs the server but will not launch the demo application.', true)
     .option('-s, --static', 'Launches the server and application using pre-built files.', true)
@@ -50,7 +51,8 @@ function startCommandProcess(args: CLIArguments) {
         mode: args.mode || 'development',
         noDemo: args.noDemo === undefined ? false : true,
         static: args.static === undefined ? false : true,
-        writeToDisk: args.writeToDisk === undefined ? false : true
+        writeToDisk: args.writeToDisk === undefined ? false : true,
+        runtime: args.runtime
     };
 
     startServer(sanitizedArgs);

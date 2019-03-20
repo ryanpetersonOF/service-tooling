@@ -25,6 +25,9 @@ export function getProviderUrl(version: string, manifestUrl?: string) {
     } else if (version === 'staging') {
         // Use the latest staging build
         return url = `${CDN_LOCATION}/app.staging.json${query}`;
+    } else if (version === 'testing') {
+        // Use the testing provider
+        return url = `http://localhost:${PORT}/test/provider.json${query}`;
     } else if (/\d+\.\d+\.\d+/.test(version)) {
         // Use a specific public release of the service
         return url = `${CDN_LOCATION}/${version}/app.json${query}`;
