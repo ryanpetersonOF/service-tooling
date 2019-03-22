@@ -25,7 +25,7 @@ async function createServer(args: CLIArguments) {
     const app = express();
 
     // Add special route for any 'app.json' files - will re-write the contents according to the command-line arguments of this server
-    app.use(/\/?(.*app\.json)/, createAppJsonMiddleware(args.providerVersion));
+    app.use(/\/?(.*app\.json)/, createAppJsonMiddleware(args.providerVersion, args.runtime));
 
     // Add endpoint for creating new application manifests from scratch - used within demo app for lauching 'custom' applications
     app.use('/manifest', createCustomManifestMiddleware());

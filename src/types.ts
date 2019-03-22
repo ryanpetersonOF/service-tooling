@@ -39,6 +39,11 @@ export interface CLIArguments {
      * also write the output to the 'dist' folder, as if running one of the 'build' scripts.
      */
     writeToDisk: boolean;
+
+    /**
+     * Sets the runtime version to be used in place of values in loaded app.json files.
+     */
+    runtime?: string;
 }
 
 export type BuildCommandArgs = {
