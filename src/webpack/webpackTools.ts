@@ -13,7 +13,8 @@ export interface CustomWebpackOptions extends webpack.Options.Optimization {
      */
     minify?: boolean;
     /**
-     * If the resulting module should inject itself into the window object to make itself easily accessible within HTML.  Defaults to false.
+     * If the resulting module should inject itself into the window object to make itself
+     * easily accessible within HTML.  Defaults to false.
      *
      * Should be used in combination with the 'libraryName' option.
      */
@@ -50,7 +51,7 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
     };
 
     if (options && options.isLibrary === true) {
-        if (!!options.libraryName) {
+        if (options.libraryName) {
             config.output!.library = options.libraryName;
         } else {
             config.output!.library = '[name]';

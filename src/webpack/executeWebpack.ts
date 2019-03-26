@@ -1,7 +1,9 @@
-import {RequestHandler} from 'express-serve-static-core';
 import * as path from 'path';
+
+import {RequestHandler} from 'express-serve-static-core';
 import * as webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
+
 import {WebpackMode} from '../types';
 import {getRootDirectory} from '../utils/getRootDirectory';
 
