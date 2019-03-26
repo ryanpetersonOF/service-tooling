@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import * as program from 'commander';
+
 import {startServer} from './server/server';
 import {CLIArguments, BuildCommandArgs} from './types';
 import {createZipProvider} from './scripts/createProviderZip';
@@ -13,7 +14,8 @@ program.command('start')
     .option(
         '-v, --providerVersion <version>',
         'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | x.y.z',
-        'local')
+        'local'
+    )
     .option('-r, --runtime <version>', 'Sets the runtime version.  Options: stable | w.x.y.z', 'stable')
     .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
     .option('-n, --noDemo', 'Runs the server but will not launch the demo application.', true)
@@ -43,7 +45,6 @@ if (program.args.length === 0) {
 
 /**
  * Starts the build + server process, passing in any provided CLI arguments.
- * @param args
  */
 function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
@@ -59,7 +60,7 @@ function startCommandProcess(args: CLIArguments) {
 }
 
 /**
- * Initiates a webpack build for the extending project
+ * Initiates a webpack build for the extending project.
  */
 async function buildCommandProcess(args: BuildCommandArgs) {
     const sanitizedArgs = {mode: args.mode || 'production'};

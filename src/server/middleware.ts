@@ -1,5 +1,6 @@
-import {NextFunction, Request, RequestHandler, Response} from 'express-serve-static-core';
 import * as path from 'path';
+
+import {NextFunction, Request, RequestHandler, Response} from 'express-serve-static-core';
 
 import {getJsonFile} from '../utils/getJsonFile';
 import {getProjectConfig} from '../utils/getProjectConfig';
