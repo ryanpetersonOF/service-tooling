@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
+        "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "module": "commonjs",
         "noEmitOnError": true,
@@ -16,5 +18,8 @@
         "jsx": "react",
         "declaration": false,
         "moduleResolution": "node"
-    }
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }
