@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import * as childprocess from 'child_process';
+import * as path from 'path';
 
 import * as program from 'commander';
 
@@ -7,7 +8,6 @@ import {startServer} from './server/server';
 import {CLIArguments, BuildCommandArgs} from './types';
 import {createZipProvider} from './scripts/createProviderZip';
 import {executeWebpack} from './webpack/executeWebpack';
-
 
 /**
  * Start command
@@ -95,12 +95,14 @@ function zipCommandProcess() {
  * Starts the eslint check process
  */
 function checkCommandProcess() {
-    childprocess.execSync('.\\node_modules\\.bin\\eslint src test --ext .ts --ext .tsx', {stdio: 'inherit'});
+    const cmd = `${path.resolve('./node_modules/.bin/eslint')} src test --ext .ts --ext .tsx`;
+    childprocess.execSync(cmd, {stdio: 'inherit'});
 }
 
 /**
  * Starts the eslint fix process
  */
 function fixCommandProcess() {
-    childprocess.execSync('.\\node_modules\\.bin\\eslint src test --ext .ts --ext .tsx --fix', {stdio: 'inherit'});
+    const cmd = `${path.resolve('./node_modules/.bin/eslint')} src test --ext .ts --ext .tsx --fix`;
+    childprocess.execSync(cmd, {stdio: 'inherit'});
 }
