@@ -1,6 +1,6 @@
 {
     "eslint.options": {
-        "configFile": "./src/config/.eslintrc.json"
+        "configFile": "src/config/.eslintrc.json"
     },
     "eslint.validate": [
         "javascript",

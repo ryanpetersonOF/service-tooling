@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import * as childprocess from 'child_process';
 
 import * as program from 'commander';
 
@@ -6,6 +7,7 @@ import {startServer} from './server/server';
 import {CLIArguments, BuildCommandArgs} from './types';
 import {createZipProvider} from './scripts/createProviderZip';
 import {executeWebpack} from './webpack/executeWebpack';
+
 
 /**
  * Start command
@@ -35,6 +37,19 @@ program.command('build')
  */
 program.command('zip').action(zipCommandProcess);
 
+/**
+ * ESLint Check
+ */
+program.command('check').action(checkCommandProcess);
+
+/**
+ * ESLint Fix
+ */
+program.command('fix').action(fixCommandProcess);
+
+/**
+ * Process CLI commands
+ */
 program.parse(process.argv);
 
 // If program was called with no arguments, show help.
@@ -74,4 +89,18 @@ async function buildCommandProcess(args: BuildCommandArgs) {
  */
 function zipCommandProcess() {
     createZipProvider();
+}
+
+/**
+ * Starts the eslint check process
+ */
+function checkCommandProcess() {
+    childprocess.execSync('.\\node_modules\\.bin\\eslint src test --ext .ts --ext .tsx', {stdio: 'inherit'});
+}
+
+/**
+ * Starts the eslint fix process
+ */
+function fixCommandProcess() {
+    childprocess.execSync('.\\node_modules\\.bin\\eslint src test --ext .ts --ext .tsx --fix', {stdio: 'inherit'});
 }
