@@ -7,7 +7,7 @@
     "check": "eslint src demo --ext .ts --ext .tsx --config src/config/.eslintrc.json",
     "clean": "rimraf dist",
     "fix": "eslint src demo --ext .ts --ext .tsx --config src/config/.eslintrc.json --fix",
-    "build": "npm run clean && tsc -p tsconfig.json && node fileCopy.js",
+    "build": "npm run clean && tsc -p tsconfig.json && node src/fileCopy.js",
     "demo": "npm run build && cd demo && npm run start",
     "demo:build": "npm run build && cd demo && npm run build",
     "start": "npm run build && node dist/cli.js start",
