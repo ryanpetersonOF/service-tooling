@@ -45,7 +45,7 @@ pipeline {
 
                 dir('./dist') {
                     withCredentials([string(credentialsId: "NPM_TOKEN_WRITE", variable: 'NPM_TOKEN')]) {
-                        sh "echo //registry.npmjs.org/:_authToken=$NPM_TOKEN > $WORKSPACE/.npmrc"
+                        sh "echo //registry.npmjs.org/:_authToken=$NPM_TOKEN > $WORKSPACE/dist/.npmrc"
                     }
                     
                     echo "publishing to npm, version: " + BUILD_VERSION
