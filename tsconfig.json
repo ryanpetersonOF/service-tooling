@@ -1,20 +1,12 @@
 {
-    "extends": "gts/tsconfig-google.json",
+    "extends": "./src/config/tsconfig-services.json",
     "compilerOptions": {
-        "target": "es2017",
-        "outDir": "dist",
-        "rootDir": "src",
-        "lib": ["dom", "es2017"],
-        "types": ["node"],
-        "jsx": "react",
         "sourceMap": false,
-        "declaration": false,
-        "moduleResolution": "node"
+        "rootDir": "src",
+        "outDir": "dist",
+        "esModuleInterop": false
     },
     "include": [
         "src"
-    ],
-    "exclude": [
-        "node_modules"
     ]
 }

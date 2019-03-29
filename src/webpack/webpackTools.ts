@@ -13,13 +13,14 @@ export interface CustomWebpackOptions extends webpack.Options.Optimization {
      */
     minify?: boolean;
     /**
-     * If the resulting module should inject itself into the window object to make itself easily accessible within HTML.  Defaults to false.
+     * If the resulting module should inject itself into the window object to make itself
+     * easily accessible within HTML. Defaults to false.
      *
      * Should be used in combination with the 'libraryName' option.
      */
     isLibrary?: boolean;
     /**
-     * Sets the global variable name for the library on the window.  Required to have 'isLibrary' enabled.
+     * Sets the global variable name for the library on the window. Required to have 'isLibrary' enabled.
      */
     libraryName?: string;
     /**
@@ -50,7 +51,7 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
     };
 
     if (options && options.isLibrary === true) {
-        if (!!options.libraryName) {
+        if (options.libraryName) {
             config.output!.library = options.libraryName;
         } else {
             config.output!.library = '[name]';
@@ -81,7 +82,6 @@ export const manifestPlugin = (() => {
                 config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';
                 config.startup_app.autoShow = false;
             } else {
-                console.warn('Using \'npm run build\' (or build:dev) when running locally. Can debug without building first by running \'npm start\'.');
                 config.startup_app.url = `http://localhost:${PORT}/provider/provider.html`;
             }
 
