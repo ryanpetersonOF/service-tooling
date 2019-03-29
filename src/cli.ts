@@ -1,6 +1,9 @@
 #!/usr/bin/env node
+import * as childprocess from 'child_process';
+import * as path from 'path';
 
 import * as program from 'commander';
+
 import {startServer} from './server/server';
 import {CLIArguments, BuildCommandArgs} from './types';
 import {createZipProvider} from './scripts/createProviderZip';
@@ -13,7 +16,8 @@ program.command('start')
     .option(
         '-v, --providerVersion <version>',
         'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | x.y.z',
-        'local')
+        'local'
+    )
     .option('-r, --runtime <version>', 'Sets the runtime version.  Options: stable | w.x.y.z')
     .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
     .option('-n, --noDemo', 'Runs the server but will not launch the demo application.', true)
@@ -33,17 +37,29 @@ program.command('build')
  */
 program.command('zip').action(zipCommandProcess);
 
+/**
+ * ESLint Check
+ */
+program.command('check').action(checkCommandProcess);
+
+/**
+ * ESLint Fix
+ */
+program.command('fix').action(fixCommandProcess);
+
+/**
+ * Process CLI commands
+ */
 program.parse(process.argv);
 
-// If program was called with no arguments, show help.
+// If program was called with no arguments, show help
 if (program.args.length === 0) {
     program.help();
 }
 
 
 /**
- * Starts the build + server process, passing in any provided CLI arguments.
- * @param args
+ * Starts the build + server process, passing in any provided CLI arguments
  */
 function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
@@ -73,4 +89,24 @@ async function buildCommandProcess(args: BuildCommandArgs) {
  */
 function zipCommandProcess() {
     createZipProvider();
+}
+
+/**
+ * Starts the eslint check process
+ */
+function checkCommandProcess() {
+    const eslintCmd = path.resolve('./node_modules/.bin/eslint');
+    const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
+    const cmd = `${eslintCmd} src test --ext .ts --ext .tsx --config '${eslintConfig}'`;
+    childprocess.execSync(cmd, {stdio: 'inherit'});
+}
+
+/**
+ * Starts the eslint fix process
+ */
+function fixCommandProcess() {
+    const eslintCmd = path.resolve('./node_modules/.bin/eslint');
+    const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
+    const cmd = `${eslintCmd} src test --ext .ts --ext .tsx --fix --config ${eslintConfig}`;
+    childprocess.execSync(cmd, {stdio: 'inherit'});
 }

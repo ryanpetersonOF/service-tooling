@@ -1,7 +1,8 @@
+import {platform} from 'os';
+
 import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
 import * as fetch from 'node-fetch';
-import {platform} from 'os';
 
 import {CLIArguments} from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
@@ -24,10 +25,12 @@ import {createAppJsonMiddleware, createCustomManifestMiddleware} from './middlew
 async function createServer(args: CLIArguments) {
     const app = express();
 
-    // Add special route for any 'app.json' files - will re-write the contents according to the command-line arguments of this server
+    // Add special route for any 'app.json' files - will re-write the contents
+    // according to the command-line arguments of this server
     app.use(/\/?(.*app\.json)/, createAppJsonMiddleware(args.providerVersion, args.runtime));
 
-    // Add endpoint for creating new application manifests from scratch - used within demo app for lauching 'custom' applications
+    // Add endpoint for creating new application manifests from scratch.
+    // Used within demo app for lauching 'custom' applications
     app.use('/manifest', createCustomManifestMiddleware());
 
     // Add route for serving static resources
@@ -38,13 +41,17 @@ async function createServer(args: CLIArguments) {
         // Run application using pre-built code (use 'npm run build' or 'npm run build:dev')
         app.use(express.static(getRootDirectory() + '/dist'));
     } else {
-        // Run application using webpack-dev-middleware. Will build app before launching, and watch for any source file changes
+        // Run application using webpack-dev-middleware. Will build app before launching, and watch
+        // for any source file changes
         app.use(await executeWebpack(args.mode, args.writeToDisk));
     }
 
     return app;
 }
 
+/**
+ * Starts the express instance and launches the demo application.  This will also wire up app closed detection.
+ */
 export async function startServer(args: CLIArguments) {
     const app = await createServer(args);
     const {PORT} = getProjectConfig();
@@ -82,7 +89,8 @@ export async function startServer(args: CLIArguments) {
                             'closed',
                             async () => {
                                 process.exit(0);
-                            })
+                            }
+                        )
                         .catch(console.error);
                 }, console.error);
             } else {

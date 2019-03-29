@@ -1,10 +1,14 @@
-import * as archiver from 'archiver';
 import {createWriteStream} from 'fs';
 import {resolve} from 'path';
+
+import * as archiver from 'archiver';
 
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getRootDirectory} from '../utils/getRootDirectory';
 
+/**
+ * Creates a zip archive of the service provider.
+ */
 export function createZipProvider() {
     const {SERVICE_NAME} = getProjectConfig();
     const output = createWriteStream(resolve(getRootDirectory(), 'dist', 'provider', `${SERVICE_NAME}-service.zip`));
