@@ -82,7 +82,6 @@ export const manifestPlugin = (() => {
                 config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';
                 config.startup_app.autoShow = false;
             } else {
-                console.warn('Using \'npm run build\' (or build:dev) when running locally. Can debug without building first by running \'npm start\'.');
                 config.startup_app.url = `http://localhost:${PORT}/provider/provider.html`;
             }
 
