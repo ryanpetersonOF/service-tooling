@@ -18,7 +18,7 @@ pipeline {
                 sh "echo ${GIT_SHORT_SHA} > ./dist/SHA.txt"
                 withCredentials([string(credentialsId: "NPM_TOKEN_WRITE", variable: 'NPM_TOKEN')]) {
                     sh "echo //registry.npmjs.org/:_authToken=$NPM_TOKEN > $WORKSPACE/.npmrc"
-                {
+                }
 
                 dir('./dist'){                    
                     echo "publishing pre-release version to npm: " + BUILD_VERSION
