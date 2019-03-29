@@ -95,7 +95,9 @@ function zipCommandProcess() {
  * Starts the eslint check process
  */
 function checkCommandProcess() {
-    const cmd = `${path.resolve('./node_modules/.bin/eslint')} src test --ext .ts --ext .tsx`;
+    const eslintCmd = path.resolve('./node_modules/.bin/eslint');
+    const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
+    const cmd = `${eslintCmd} src test --ext .ts --ext .tsx --config '${eslintConfig}'`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
 
@@ -103,6 +105,8 @@ function checkCommandProcess() {
  * Starts the eslint fix process
  */
 function fixCommandProcess() {
-    const cmd = `${path.resolve('./node_modules/.bin/eslint')} src test --ext .ts --ext .tsx --fix`;
+    const eslintCmd = path.resolve('./node_modules/.bin/eslint');
+    const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
+    const cmd = `${eslintCmd} src test --ext .ts --ext .tsx --fix --config ${eslintConfig}`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
