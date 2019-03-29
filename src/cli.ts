@@ -52,14 +52,14 @@ program.command('fix').action(fixCommandProcess);
  */
 program.parse(process.argv);
 
-// If program was called with no arguments, show help.
+// If program was called with no arguments, show help
 if (program.args.length === 0) {
     program.help();
 }
 
 
 /**
- * Starts the build + server process, passing in any provided CLI arguments.
+ * Starts the build + server process, passing in any provided CLI arguments
  */
 function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
@@ -75,7 +75,7 @@ function startCommandProcess(args: CLIArguments) {
 }
 
 /**
- * Initiates a webpack build for the extending project.
+ * Initiates a webpack build for the extending project
  */
 async function buildCommandProcess(args: BuildCommandArgs) {
     const sanitizedArgs = {mode: args.mode || 'production'};

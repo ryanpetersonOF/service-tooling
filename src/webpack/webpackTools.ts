@@ -14,13 +14,13 @@ export interface CustomWebpackOptions extends webpack.Options.Optimization {
     minify?: boolean;
     /**
      * If the resulting module should inject itself into the window object to make itself
-     * easily accessible within HTML.  Defaults to false.
+     * easily accessible within HTML. Defaults to false.
      *
      * Should be used in combination with the 'libraryName' option.
      */
     isLibrary?: boolean;
     /**
-     * Sets the global variable name for the library on the window.  Required to have 'isLibrary' enabled.
+     * Sets the global variable name for the library on the window. Required to have 'isLibrary' enabled.
      */
     libraryName?: string;
     /**
