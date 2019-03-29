@@ -97,7 +97,7 @@ function zipCommandProcess() {
 function checkCommandProcess() {
     const eslintCmd = path.resolve('./node_modules/.bin/eslint');
     const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
-    const cmd = `${eslintCmd} src test --ext .ts --ext .tsx --config ${eslintConfig}';
+    const cmd = `${eslintCmd} src test --ext .ts --ext .tsx --config ${eslintConfig}`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
 
