@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/HadoukenIO/service-tooling",
   "dependencies": {
+    "@types/openfin": "^39.0.1",
     "@typescript-eslint/eslint-plugin": "^1.5.0",
     "@typescript-eslint/parser": "^1.5.0",
     "acorn": "^6.1.1",
