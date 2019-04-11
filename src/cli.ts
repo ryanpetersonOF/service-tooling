@@ -6,13 +6,15 @@ import * as program from 'commander';
 
 import {startServer} from './server/server';
 import {CLIArguments, BuildCommandArgs} from './types';
-import {createZipProvider} from './scripts/createProviderZip';
+import {createProviderZip} from './scripts/createProviderZip';
+import {createRuntimeChannels} from './scripts/createRuntimeChannels';
 import {executeWebpack} from './webpack/executeWebpack';
 
 /**
  * Start command
  */
 program.command('start')
+    .description('Builds and runs a demo app, for testing service functionality.')
     .option(
         '-v, --providerVersion <version>',
         'Sets the runtime version for the provider.  Defaults to "local". Options: local | staging | stable | x.y.z',
@@ -29,23 +31,38 @@ program.command('start')
  * Build command
  */
 program.command('build')
+    .description('Builds the project and writes output to disk, will simultaneously build client, provider and demo app.')
     .action(buildCommandProcess)
     .option('-m, --mode <mode>', 'Sets the webpack build mode.  Defaults to "production". Options: development | production | none', 'production');
 
 /**
+ * Create Runtime channels
+ */
+program.command('channels')
+    .description('Creates additional provider manifests that will run the provider on specific runtime channels.')
+    .action(createRuntimeChannels);
+
+/**
  * Zip command
  */
-program.command('zip').action(zipCommandProcess);
+program.command('zip')
+    .description('Creates a zip file that contains the provider source code and resources. Can be used to re-deploy the provider internally.')
+    .description('Creates a zip file that contains the provider source code and resources, for re-deploying.')
+    .action(createProviderZip);
 
 /**
  * ESLint Check
  */
-program.command('check').action(checkCommandProcess);
+program.command('check')
+    .description('Checks the project for linting issues.')
+    .action(checkCommandProcess);
 
 /**
  * ESLint Fix
  */
-program.command('fix').action(fixCommandProcess);
+program.command('fix')
+    .description('Checks the project for linting issues, and fixes issues wherever possible.')
+    .action(fixCommandProcess);
 
 /**
  * Process CLI commands
@@ -82,13 +99,6 @@ async function buildCommandProcess(args: BuildCommandArgs) {
 
     await executeWebpack(sanitizedArgs.mode, true);
     process.exit(0);
-}
-
-/**
- * Starts the zip process
- */
-function zipCommandProcess() {
-    createZipProvider();
 }
 
 /**
