@@ -15,6 +15,6 @@ const glob = require('glob');
 
 // List of directories to copy into the dist directory on build
 [
+
     'src/typedoc-template'
 ].forEach(file => fs.copySync(file, path.resolve('dist', path.relative('./src', file))));
-
