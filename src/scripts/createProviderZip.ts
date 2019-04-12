@@ -9,7 +9,7 @@ import {getRootDirectory} from '../utils/getRootDirectory';
 /**
  * Creates a zip archive of the service provider.
  */
-export function createZipProvider() {
+export function createProviderZip() {
     const {SERVICE_NAME} = getProjectConfig();
     const output = createWriteStream(resolve(getRootDirectory(), 'dist', 'provider', `${SERVICE_NAME}-service.zip`));
     const archive = archiver('zip', {zlib: {level: 9}});
