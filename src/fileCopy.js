@@ -19,7 +19,13 @@ const glob = require('glob');
 [
     ...glob.sync('src/typedoc-template/**/*')
 ].forEach(file => {
-    mkdirp.sync(path.dirname(path.resolve('dist', path.relative('./src', file))));
-    fs.copyFileSync(path.resolve(file), path.resolve('dist', path.relative('./src', file)));
+    const isDir = fs.lstatSync(file).isDirectory();
+    if (isDir) {
+        fs.mkdirSync(path.dirname(path.resolve('dist', path.relative('./src', file))));
+    } else {
+        fs.copyFileSync(path.resolve(file), path.resolve('dist', path.relative('./src', file)));
+    }
+    // mkdirp.sync(path.dirname(path.resolve('dist', path.relative('./src', file))));
+    // fs.copyFileSync(path.resolve(file), path.resolve('dist', path.relative('./src', file)));
 });
 
