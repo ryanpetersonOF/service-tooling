@@ -25,7 +25,5 @@ const glob = require('glob');
     } else {
         fs.copyFileSync(path.resolve(file), path.resolve('dist', path.relative('./src', file)));
     }
-    // mkdirp.sync(path.dirname(path.resolve('dist', path.relative('./src', file))));
-    // fs.copyFileSync(path.resolve(file), path.resolve('dist', path.relative('./src', file)));
 });
 
