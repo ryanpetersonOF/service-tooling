@@ -61,6 +61,7 @@
     "@types/webpack": "^4.4.25",
     "@types/webpack-dev-middleware": "^2.0.2",
     "eslint-plugin-jsdoc": "^4.8.0",
+    "fs-extra": "^7.0.1",
     "glob": "^7.1.3",
     "hadouken-js-adapter": "^0.39.1",
     "mkdirp": "^0.5.1",
