@@ -137,6 +137,6 @@ function generateTypedoc() {
         './dist/docs/api',
         './src/client/tsconfig.json'
     ].map(filePath => path.resolve(filePath));
-    const cmd = `"${typedocCmd}" --name "OpenFin ${config.SERVICE_NAME}" --theme "${themeDir}" --out "${outDir}" --excludeNotExported --excludePrivate --excludeProtected --hideGenerator --tsconfig "${tsConfig}" --readme none`; // eslint-disable-line
+    const cmd = `"${typedocCmd}" --name "OpenFin ${config.SERVICE_TITLE}" --theme "${themeDir}" --out "${outDir}" --excludeNotExported --excludePrivate --excludeProtected --hideGenerator --tsconfig "${tsConfig}" --readme none`; // eslint-disable-line
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }

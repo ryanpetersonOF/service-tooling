@@ -6,6 +6,7 @@ import {existsSync, readFileSync} from 'fs';
  */
 interface ConfigFile {
     SERVICE_NAME: string;
+    SERVICE_TITLE: string;
     PORT: number;
     CDN_LOCATION: string;
 }
@@ -13,7 +14,7 @@ interface ConfigFile {
 /**
  * Given name for the projects local configuration file needed for our operations.
  */
-const CONFIG_FILE_PATH = './config.json';
+const CONFIG_FILE_PATH = './services.config.json';
 
 let config: ConfigFile|null = null;
 
