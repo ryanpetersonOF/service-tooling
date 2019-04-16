@@ -64,10 +64,19 @@ program.command('fix')
     .description('Checks the project for linting issues, and fixes issues wherever possible.')
     .action(fixCommandProcess);
 
-
+/**
+ * Typedoc command
+ */
 program.command('docs')
     .description('Generates typedoc for the project using the standardized theme.')
     .action(generateTypedoc);
+
+/**
+ * Unit tests command
+ */
+program.command('test:unit')
+    .description('Runs all unit tests for the extending project.')
+    .action(runUnitTests);
 /**
  * Process CLI commands
  */
@@ -138,5 +147,17 @@ function generateTypedoc() {
         './src/client/tsconfig.json'
     ].map(filePath => path.resolve(filePath));
     const cmd = `"${typedocCmd}" --name "OpenFin ${config.SERVICE_TITLE}" --theme "${themeDir}" --out "${outDir}" --excludeNotExported --excludePrivate --excludeProtected --hideGenerator --tsconfig "${tsConfig}" --readme none`; // eslint-disable-line
+    childprocess.execSync(cmd, {stdio: 'inherit'});
+}
+
+/**
+ * Runs unit tests
+ */
+function runUnitTests(){
+    const [jestCmd, jestUnitConfig] = [
+        './node_modules/.bin/jest',
+        './node_modules/openfin-service-tooling/jest/jest-unit.config.js'
+    ].map(filePath => path.resolve(filePath));
+    const cmd = `"${jestCmd}" --config "${jestUnitConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
