@@ -1,6 +1,6 @@
 {
   "name": "openfin-service-tooling",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -41,6 +41,12 @@
     "eslint-plugin-react": "^7.12.4",
     "express": "^4.16.2",
     "file-loader": "^3.0.1",
+    "jest": "^24.5.0",
+    "jest-circus": "^24.5.0",
+    "jest-cli": "^24.5.0",
+    "jest-environment-node": "^24.5.0",
+    "jest-junit": "^6.3.0",
+    "jest-util": "^23.4.0",
     "node-fetch": "^2.3.0",
     "rimraf": "^2.6.3",
     "style-loader": "^0.21.0",
