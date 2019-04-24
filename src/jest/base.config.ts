@@ -12,7 +12,7 @@ export function createConfig(testType: 'unit'|'int') {
         transform: {
             '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest'
         },
-        testRegex: '\\.unittest\\.ts$',
+        testRegex: `\\.${testType === 'int' ? 'test' : 'unittest'}\\.ts$`,
         modulePaths: [
             '<rootDir>/node_modules'
         ],
