@@ -115,7 +115,7 @@ function runIntegrationTests(args: CLITestArguments){
         static: args.static === undefined ? false : true,
         filter: args.filter ? `--testNamePattern ${args.filter}` : '',
         fileNames: args.fileNames && args.fileNames.split(' ').map(testFileName => `${testFileName}.inttest.ts`).join(' ') || '',
-        customMiddlewarePath: args.customMiddlewarePath,
+        customMiddlewarePath: args.customMiddlewarePath && path.resolve(args.customMiddlewarePath) || undefined,
         runtime: args.runtime,
         extraArgs: args.extraArgs || ''
     };

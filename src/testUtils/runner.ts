@@ -49,7 +49,8 @@ export function startIntegrationRunner(args: CLITestArguments) {
     createServer()
         .then(async app => {
             if (args.customMiddlewarePath) {
-                await require(path.resolve(args.customMiddlewarePath))(app);
+                console.log(`Using custom middleware from file ${args.customMiddlewarePath}`);
+                await require(args.customMiddlewarePath)(app);
             }
             return app;
         })
