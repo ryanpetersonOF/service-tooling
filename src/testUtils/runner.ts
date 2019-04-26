@@ -1,20 +1,16 @@
 import {getProjectConfig} from '../utils/getProjectConfig';
+import {createServer, startServer, createDefaultMiddleware} from '../server/server';
+import {CLITestArguments} from '../types';
 
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const express = require('express');
 const execa = require('execa');
 const {launch} = require('hadouken-js-adapter');
 
-const projectConfig = getProjectConfig();
-
 let port: number;
 
-// Should be cmd-line args at some point
-const debugMode = true;
-const skipBuild = false;
 
 const cleanup = async (res: any) => {
     if (os.platform().match(/^win/)) {
@@ -39,45 +35,35 @@ const run = (...args: any[]) => {
     return p;
 };
 
-/**
- * Performs a clean build of the application and tests
- */
-async function build() {
-    await run('npm', ['run', 'clean']);
-    await run('npm', ['run', debugMode ? 'build:dev' : 'build']);
-}
+export function startIntegrationRunner(args: CLITestArguments) {
+    const jestArgs = [
+        '--config',
+        path.resolve('./node_modules/openfin-service-tooling/jest/jest-int.config.js'),
+        '--forceExit',
+        '--no-cache',
+        '--runInBand',
+        args.fileNames,
+        args.filter
+    ];
 
-async function serve() {
-    return new Promise((resolve) => {
-        const app = express();
-
-        // Sneakily return the test directory instead of the default one
-        app.get('/provider/sample-app-directory.json', (req: any, res: any) => {
-            const testDirectory = JSON.parse(fs.readFileSync(path.join('res', 'test', 'sample-app-directory.json')));
-
-            res.contentType('application/json');
-            res.json(testDirectory);
-        });
-
-        app.use(express.static('dist'));
-        app.use(express.static('res'));
-
-        app.listen(projectConfig.PORT, resolve);
-    });
-}
-
-export function startIntegrationRunner() {
-    const buildStep = skipBuild ? Promise.resolve() : build();
-
-    buildStep
-        .then(() => serve())
+    createServer()
+        .then(async app => {
+            if (args.customMiddlewarePath) {
+                await require(path.resolve(args.customMiddlewarePath))(app);
+            }
+            return app;
+        })
+        .then(app => {
+            return createDefaultMiddleware(app, args);
+        })
+        .then(startServer)
         .then(async () => {
-            port = await launch({manifestUrl: `http://localhost:${projectConfig.PORT}/test/test-app-main.json`});
+            const port = await launch({manifestUrl: `http://localhost:${getProjectConfig().PORT}/test/test-app-main.json`});
             console.log('Openfin running on port ' + port);
             return port;
         })
         .catch(fail)
-        .then(OF_PORT => run('jest', ['--config', path.resolve('./node_modules/openfin-service-tooling/jest/jest-int.config.js'), '--forceExit', '--no-cache', '--runInBand'], {env: {OF_PORT}}))  // eslint-disable-line
+        .then(OF_PORT => run('jest', jestArgs, {env: {OF_PORT}}))
         .then(cleanup)
         .catch(cleanup);
 }
