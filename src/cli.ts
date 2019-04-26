@@ -4,12 +4,13 @@ import * as path from 'path';
 
 import * as program from 'commander';
 
-import {startServer} from './server/server';
-import {CLIArguments, BuildCommandArgs} from './types';
+import {startServer, createServer, startApplication, createDefaultMiddleware} from './server/server';
+import {CLIArguments, BuildCommandArgs, CLITestArguments} from './types';
 import {createProviderZip} from './scripts/createProviderZip';
 import {createRuntimeChannels} from './scripts/createRuntimeChannels';
 import {executeWebpack} from './webpack/executeWebpack';
 import {getProjectConfig} from './utils/getProjectConfig';
+import {startIntegrationRunner} from './testUtils/runner';
 
 /**
  * Start command
@@ -77,6 +78,21 @@ program.command('docs')
 program.command('test:unit')
     .description('Runs all unit tests for the extending project.')
     .action(runUnitTests);
+
+/**
+ * Integration tests command
+ */
+program.command('test:int')
+    .description('Runs all integration tests for the extending project.')
+    .option('-r, --runtime <version>', 'Sets the runtime version.  Options: stable | w.x.y.z')
+    .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
+    .option('-s, --static', 'Launches the server and application using pre-built files.', true)
+    .option('-n, --fileName <fileName>', 'Runs all tests in the given file.')
+    .option('-f, --filter <filter>', 'Only runs tests whose names match the given pattern.')
+    .option('-c, --customMiddleware <path>', 'Path to a custom middleware js file')
+    .option('-x, --extra <extra...>', 'Any extra arguments to pass on to jest')
+    .action(runIntegrationTests);
+
 /**
  * Process CLI commands
  */
@@ -87,11 +103,24 @@ if (program.args.length === 0) {
     program.help();
 }
 
+function runIntegrationTests(args: CLITestArguments){
+    const sanitizedArgs: CLITestArguments = {
+        providerVersion: 'testing',
+        noDemo: true,
+        writeToDisk: args.static !== undefined && args.static ? false : true,
+        mode: args.mode || 'development',
+        static: args.static === undefined ? false : true,
+        filter: args.filter ? `--testNamePattern ${args.filter}` : '',
+        fileNames: args.fileNames && args.fileNames.split(' ').map(testFileName => `${testFileName}.inttest.ts`).join(' ') || '',
+        runtime: args.runtime
+    };
+    startIntegrationRunner(sanitizedArgs);
+}
 
 /**
  * Starts the build + server process, passing in any provided CLI arguments
  */
-function startCommandProcess(args: CLIArguments) {
+async function startCommandProcess(args: CLIArguments) {
     const sanitizedArgs: CLIArguments = {
         providerVersion: args.providerVersion || 'local',
         mode: args.mode || 'development',
@@ -101,7 +130,10 @@ function startCommandProcess(args: CLIArguments) {
         runtime: args.runtime
     };
 
-    startServer(sanitizedArgs);
+    const server = await createServer();
+    await createDefaultMiddleware(server, sanitizedArgs);
+    await startServer(server);
+    startApplication(sanitizedArgs);
 }
 
 /**

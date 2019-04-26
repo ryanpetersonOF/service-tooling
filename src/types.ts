@@ -55,3 +55,23 @@ export type BuildCommandArgs = {
  * Available modes for webpack to run against.
  */
 export type WebpackMode = 'development'|'production'|'none';
+
+/**
+ * Acceptable arguments to use when running integration tests (test:int)
+ */
+export interface CLITestArguments extends CLIArguments {
+    /**
+     * Only runs tests whose names match the given pattern.
+     */
+    filter?: string;
+
+    /**
+     * Runs all tests in the given file.
+     */
+    fileNames?: string;
+
+    /**
+     * Path to any custom middleware required for testing services.
+     */
+    customMiddlewarePath?: string;
+}
