@@ -45,6 +45,11 @@ export interface CLIArguments {
      * Sets the runtime version to be used in place of values in loaded app.json files.
      */
     runtime?: string;
+
+    /**
+     * Any extra arguments which will be passed on to Jest/runner but not processed by any methods of this service.
+     */
+    extraArgs?: string;
 }
 
 export type BuildCommandArgs = {
@@ -71,7 +76,7 @@ export interface CLITestArguments extends CLIArguments {
     fileNames?: string;
 
     /**
-     * Path to any custom middleware required for testing services.
+     * Path to file for any express custom middlewares required for testing.
      */
     customMiddlewarePath?: string;
 }

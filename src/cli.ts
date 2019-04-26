@@ -89,8 +89,8 @@ program.command('test:int')
     .option('-s, --static', 'Launches the server and application using pre-built files.', true)
     .option('-n, --fileName <fileName>', 'Runs all tests in the given file.')
     .option('-f, --filter <filter>', 'Only runs tests whose names match the given pattern.')
-    .option('-c, --customMiddleware <path>', 'Path to a custom middleware js file')
-    .option('-x, --extra <extra...>', 'Any extra arguments to pass on to jest')
+    .option('-c, --customMiddlewarePath <path>', 'Path to a custom middleware js file')
+    .option('-x, --extraArgs <extraArgs...>', 'Any extra arguments to pass on to jest')
     .action(runIntegrationTests);
 
 /**
@@ -103,6 +103,9 @@ if (program.args.length === 0) {
     program.help();
 }
 
+/**
+ * Handles the integration test command.
+ */
 function runIntegrationTests(args: CLITestArguments){
     const sanitizedArgs: CLITestArguments = {
         providerVersion: 'testing',
@@ -112,7 +115,9 @@ function runIntegrationTests(args: CLITestArguments){
         static: args.static === undefined ? false : true,
         filter: args.filter ? `--testNamePattern ${args.filter}` : '',
         fileNames: args.fileNames && args.fileNames.split(' ').map(testFileName => `${testFileName}.inttest.ts`).join(' ') || '',
-        runtime: args.runtime
+        customMiddlewarePath: args.customMiddlewarePath,
+        runtime: args.runtime,
+        extraArgs: args.extraArgs || ''
     };
     startIntegrationRunner(sanitizedArgs);
 }
