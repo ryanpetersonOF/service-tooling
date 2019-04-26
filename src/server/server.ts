@@ -13,6 +13,15 @@ import {executeWebpack} from '../webpack/executeWebpack';
 import {createAppJsonMiddleware, createCustomManifestMiddleware} from './middleware';
 
 /**
+ * Creates an express instance.
+ *
+ * Wrapped in async to allow chaining of promises.
+ */
+export async function createServer() {
+    return express();
+}
+
+/**
  * Adds the necessary middleware to the express instance
  *
  * - Will serve static resources from the 'res' directory
@@ -22,9 +31,7 @@ import {createAppJsonMiddleware, createCustomManifestMiddleware} from './middlew
  * - Any 'app.json' files within 'res' are pre-processed
  *   - Will explicitly set the provider URL for the service
  */
-async function createServer(args: CLIArguments) {
-    const app = express();
-
+export async function createDefaultMiddleware(app: express.Express, args: CLIArguments) {
     // Add special route for any 'app.json' files - will re-write the contents
     // according to the command-line arguments of this server
     app.use(/\/?(.*app\.json)/, createAppJsonMiddleware(args.providerVersion, args.runtime));
@@ -50,54 +57,59 @@ async function createServer(args: CLIArguments) {
 }
 
 /**
- * Starts the express instance and launches the demo application.  This will also wire up app closed detection.
+ * Starts the express and returns the express instance.
  */
-export async function startServer(args: CLIArguments) {
-    const app = await createServer(args);
+export async function startServer(app: express.Express) {
     const {PORT} = getProjectConfig();
 
     console.log('Starting application server...');
-    app.listen(PORT, async () => {
-        // Manually start service on Mac OS (no RVM support)
-        if (platform() === 'darwin') {
-            console.log('Starting Provider for Mac OS');
+    return app.listen(PORT);
+}
 
-            // Launch latest stable version of the service
-            await launch({manifestUrl: getProviderUrl(args.providerVersion)}).catch(console.log);
-        }
+/**
+ * Default for starting a project application.  This will wire up the close detection of applications as well.
+ */
+export async function startApplication(args: CLIArguments) {
+    const {PORT} = getProjectConfig();
+    // Manually start service on Mac OS (no RVM support)
+    if (platform() === 'darwin') {
+        console.log('Starting Provider for Mac OS');
 
-        // Launch application, if requested to do so
-        if (!args.noDemo) {
-            const manifestPath = 'demo/app.json';
-            const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
+        // Launch latest stable version of the service
+        await launch({manifestUrl: getProviderUrl(args.providerVersion)}).catch(console.log);
+    }
 
-            const fetchRequest = await fetch.default(getProviderUrl(args.providerVersion)).catch((err: string) => {
-                throw new Error(err);
-            });
+    // Launch application, if requested to do so
+    if (!args.noDemo) {
+        const manifestPath = 'demo/app.json';
+        const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
-            if (fetchRequest.status === 200) {
-                const providerManifestContent = await fetchRequest.json();
-                console.log('Launching application');
+        const fetchRequest = await fetch.default(getProviderUrl(args.providerVersion)).catch((err: string) => {
+            throw new Error(err);
+        });
 
-                connect({uuid: 'wrapper', manifestUrl}).then(async fin => {
-                    const service =
-                        fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
+        if (fetchRequest.status === 200) {
+            const providerManifestContent = await fetchRequest.json();
+            console.log('Launching application');
 
-                    // Terminate local server when the provider closes
-                    service
-                        .addListener(
-                            'closed',
-                            async () => {
-                                process.exit(0);
-                            }
-                        )
-                        .catch(console.error);
-                }, console.error);
-            } else {
-                throw new Error(`Invalid response from server:  Status code: ${fetchRequest.status}`);
-            }
+            connect({uuid: 'wrapper', manifestUrl}).then(async fin => {
+                const service =
+                    fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
+
+                // Terminate local server when the provider closes
+                service
+                    .addListener(
+                        'closed',
+                        async () => {
+                            process.exit(0);
+                        }
+                    )
+                    .catch(console.error);
+            }, console.error);
         } else {
-            console.log('Local server running');
+            throw new Error(`Invalid response from server:  Status code: ${fetchRequest.status}`);
         }
-    });
+    } else {
+        console.log('Local server running');
+    }
 }
