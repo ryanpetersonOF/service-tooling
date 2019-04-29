@@ -1,6 +1,8 @@
 import * as path from 'path';
 
-const {createConfig} = require(path.resolve('./node_modules/openfin-service-tooling/jest/base.config.js'));
+import getModuleRoot from '../utils/getModuleRoot';
+
+const {createConfig} = require(path.join(getModuleRoot(), '/jest/base.config.js'));
 const config = createConfig('int');
 config['globalSetup']= '<rootDir>/test/demo/utils/globalSetup.ts',
 config['globalTeardown']= '<rootDir>/test/demo/utils/globalTeardown.ts',

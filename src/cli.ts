@@ -11,6 +11,7 @@ import {createRuntimeChannels} from './scripts/createRuntimeChannels';
 import {executeWebpack} from './webpack/executeWebpack';
 import {getProjectConfig} from './utils/getProjectConfig';
 import {startIntegrationRunner} from './testUtils/runner';
+import getModuleRoot from './utils/getModuleRoot';
 
 /**
  * Start command
@@ -156,7 +157,7 @@ async function buildCommandProcess(args: BuildCommandArgs) {
  */
 function checkCommandProcess() {
     const eslintCmd = path.resolve('./node_modules/.bin/eslint');
-    const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
+    const eslintConfig = path.join(getModuleRoot(), '/.eslintrc.json');
     const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx --config "${eslintConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
@@ -166,7 +167,7 @@ function checkCommandProcess() {
  */
 function fixCommandProcess() {
     const eslintCmd = path.resolve('./node_modules/.bin/eslint');
-    const eslintConfig = path.resolve('./node_modules/openfin-service-tooling/.eslintrc.json');
+    const eslintConfig = path.join(getModuleRoot(), '/.eslintrc.json');
     const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx --fix --config "${eslintConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
@@ -179,7 +180,7 @@ function generateTypedoc() {
     const config = getProjectConfig();
     const [typedocCmd, themeDir, outDir, tsConfig] = [
         './node_modules/.bin/typedoc',
-        './node_modules/openfin-service-tooling/typedoc-template',
+        `${getModuleRoot()}/typedoc-template`,
         './dist/docs/api',
         './src/client/tsconfig.json'
     ].map(filePath => path.resolve(filePath));
@@ -193,7 +194,7 @@ function generateTypedoc() {
 function runUnitTests(){
     const [jestCmd, jestUnitConfig] = [
         './node_modules/.bin/jest',
-        './node_modules/openfin-service-tooling/jest/jest-unit.config.js'
+        `${getModuleRoot()}/jest/jest-unit.config.js`
     ].map(filePath => path.resolve(filePath));
     const cmd = `"${jestCmd}" --config "${jestUnitConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});

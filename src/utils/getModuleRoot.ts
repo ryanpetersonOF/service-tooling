@@ -1,4 +1,4 @@
-import {resolve} from 'path';
+import {join} from 'path';
 
 /**
  * Cached root directory
@@ -14,5 +14,5 @@ export default function getModuleRoot() {
     }
 
     // At time of writing this, the utils folder which this resides is one above root.
-    return rootDirectory = resolve(`../${__dirname}`);
+    return rootDirectory = join(`${__dirname}`, '..');
 }

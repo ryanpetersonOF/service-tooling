@@ -1,8 +1,8 @@
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {createServer, startServer, createDefaultMiddleware} from '../server/server';
 import {CLITestArguments} from '../types';
+import getModuleRoot from '../utils/getModuleRoot';
 
-const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
@@ -38,7 +38,7 @@ const run = (...args: any[]) => {
 export function startIntegrationRunner(args: CLITestArguments) {
     const jestArgs = [
         '--config',
-        path.resolve('./node_modules/openfin-service-tooling/jest/jest-int.config.js'),
+        path.join(getModuleRoot(), '/jest/jest-int.config.js'),
         '--forceExit',
         '--no-cache',
         '--runInBand',
