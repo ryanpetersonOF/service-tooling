@@ -86,12 +86,13 @@ program.command('test:unit')
 program.command('test:int')
     .description('Runs all integration tests for the extending project.')
     .option('-r, --runtime <version>', 'Sets the runtime version.  Options: stable | w.x.y.z')
-    .option('-m, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
+    .option('-e, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
     .option('-s, --static', 'Launches the server and application using pre-built files.', true)
-    .option('-n, --fileName <fileName>', 'Runs all tests in the given file.')
+    .option('-n, --fileNames <fileNames...>', 'Runs all tests in the given file.')
     .option('-f, --filter <filter>', 'Only runs tests whose names match the given pattern.')
-    .option('-c, --customMiddlewarePath <path>', 'Path to a custom middleware js file')
+    .option('-m, --customMiddlewarePath <path>', 'Path to a custom middleware js file')
     .option('-x, --extraArgs <extraArgs...>', 'Any extra arguments to pass on to jest')
+    .option('-c, --color', 'Colors the output text', true)
     .action(runIntegrationTests);
 
 /**
@@ -115,9 +116,10 @@ function runIntegrationTests(args: CLITestArguments){
         mode: args.mode || 'development',
         static: args.static === undefined ? false : true,
         filter: args.filter ? `--testNamePattern ${args.filter}` : '',
-        fileNames: args.fileNames && args.fileNames.split(' ').map(testFileName => `${testFileName}.inttest.ts`).join(' ') || '',
+        fileNames: args.fileNames && (args.fileNames as unknown as string).split(' ').map(testFileName => `${testFileName}.test.ts`) || [],
         customMiddlewarePath: args.customMiddlewarePath && path.resolve(args.customMiddlewarePath) || undefined,
         runtime: args.runtime,
+        color: args.color === undefined ? false : true,
         extraArgs: args.extraArgs || ''
     };
     startIntegrationRunner(sanitizedArgs);

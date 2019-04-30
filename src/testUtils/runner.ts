@@ -41,16 +41,44 @@ export function startIntegrationRunner(args: CLITestArguments) {
         path.join(getModuleRoot(), '/jest/jest-int.config.js'),
         '--forceExit',
         '--no-cache',
-        '--runInBand',
-        args.fileNames,
-        args.filter
+        '--runInBand'
     ];
+
+    /**
+     * Pushes in the colors argument if requested
+     */
+    if (args.color){
+        jestArgs.push('--colors');
+    }
+
+    /**
+     * Pushes in any file names provided
+     */
+    if (args.fileNames) {
+        jestArgs.push(...args.fileNames);
+    }
+
+    /**
+     * Pushes in the requested filter
+     */
+    if (args.filter) {
+        jestArgs.push(args.filter);
+    }
+
+    /**
+     * Adds any extra arguments to the end
+     */
+    if (args.extraArgs) {
+        jestArgs.push(args.extraArgs);
+    }
 
     createServer()
         .then(async app => {
             if (args.customMiddlewarePath) {
-                console.log(`Using custom middleware from file ${args.customMiddlewarePath}`);
+                console.log(`Using custom middleware from file ${args.customMiddlewarePath}.`);
                 await require(args.customMiddlewarePath).default(app);
+            } else {
+                console.log('No custom middleware loaded.');
             }
             return app;
         })

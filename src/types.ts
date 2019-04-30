@@ -73,10 +73,15 @@ export interface CLITestArguments extends CLIArguments {
     /**
      * Runs all tests in the given file.
      */
-    fileNames?: string;
+    fileNames?: string[];
 
     /**
      * Path to file for any express custom middlewares required for testing.
      */
     customMiddlewarePath?: string;
+
+    /**
+     * Sets color for terminal output.
+     */
+    color?: boolean;
 }
