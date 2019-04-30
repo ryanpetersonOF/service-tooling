@@ -120,7 +120,7 @@ function runIntegrationTests(args: CLITestArguments){
         customMiddlewarePath: args.customMiddlewarePath && path.resolve(args.customMiddlewarePath) || undefined,
         runtime: args.runtime,
         color: args.color === undefined ? false : true,
-        extraArgs: args.extraArgs || ''
+        extraArgs: args.extraArgs && (args.extraArgs as unknown as string).split(' ') || []
     };
     startIntegrationRunner(sanitizedArgs);
 }

@@ -69,7 +69,7 @@ export function startIntegrationRunner(args: CLITestArguments) {
      * Adds any extra arguments to the end
      */
     if (args.extraArgs) {
-        jestArgs.push(args.extraArgs);
+        jestArgs.push(...args.extraArgs);
     }
 
     createServer()

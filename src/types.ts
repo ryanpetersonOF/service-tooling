@@ -49,7 +49,7 @@ export interface CLIArguments {
     /**
      * Any extra arguments which will be passed on to Jest/runner but not processed by any methods of this service.
      */
-    extraArgs?: string;
+    extraArgs?: string[];
 }
 
 export type BuildCommandArgs = {
