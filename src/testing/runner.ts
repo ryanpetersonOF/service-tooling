@@ -38,7 +38,7 @@ const run = (...args: any[]) => {
 export function startIntegrationRunner(args: CLITestArguments) {
     const jestArgs = [
         '--config',
-        path.join(getModuleRoot(), '/jest/jest-int.config.js'),
+        path.join(getModuleRoot(), '/testing/jest/jest-int.config.js'),
         '--forceExit',
         '--no-cache',
         '--runInBand'

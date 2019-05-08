@@ -189,7 +189,7 @@ function generateTypedoc() {
 function runUnitTests(){
     const [jestCmd, jestUnitConfig] = [
         './node_modules/.bin/jest',
-        `${getModuleRoot()}/jest/jest-unit.config.js`
+        `${getModuleRoot()}/testing/jest/jest-unit.config.js`
     ].map(filePath => path.resolve(filePath));
     const cmd = `"${jestCmd}" --config "${jestUnitConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
