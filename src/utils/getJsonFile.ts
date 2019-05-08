@@ -35,3 +35,24 @@ export function getJsonFile<T>(filePath: string): Promise<T> {
         });
     });
 }
+
+/**
+ * Returns the contents of the provided JSON file.
+ */
+export function getJsonFileSync<T>(filePath: string): T {
+    // Check that the file exists locally
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`${filePath} file not found in project root.  Please check ${filePath} exists.`);
+    }
+
+    // Check it is a .json file
+    if (!path.extname(filePath).length || path.extname(filePath) !== '.json') {
+        throw new Error(`${filePath} is not a .json file`);
+    }
+
+    try {
+        return JSON.parse(fs.readFileSync(path.normalize(filePath), 'utf8'));
+    } catch (e) {
+        throw new Error(e);
+    }
+}

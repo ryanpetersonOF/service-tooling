@@ -85,3 +85,8 @@ export interface CLITestArguments extends CLIArguments {
      */
     color?: boolean;
 }
+
+/**
+ * The possibilities for type of test Jest is running.  Unit or Integration.
+ */
+export type JestMode = 'int'|'unit';
