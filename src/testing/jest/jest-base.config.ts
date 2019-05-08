@@ -1,8 +1,8 @@
 import {join} from 'path';
 
-import {getRootDirectory} from '../utils/getRootDirectory';
-import {getJsonFileSync} from '../utils/getJsonFile';
-import {JestMode} from '../types';
+import {getRootDirectory} from '../../utils/getRootDirectory';
+import {getJsonFileSync} from '../../utils/getJsonFile';
+import {JestMode} from '../../types';
 
 export function createConfig(testType: JestMode) {
     return {
@@ -16,7 +16,7 @@ export function createConfig(testType: JestMode) {
         transform: {
             '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest'
         },
-        testRegex: `\\.${testType === 'int' ? 'test' : 'unittest'}\\.ts$`,
+        testRegex: `\\.${testType === 'int' ? 'inttest' : 'unittest'}\\.ts$`,
         modulePaths: [
             '<rootDir>/node_modules'
         ],

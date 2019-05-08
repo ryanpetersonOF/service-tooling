@@ -10,7 +10,7 @@ import {createProviderZip} from './scripts/createProviderZip';
 import {createRuntimeChannels} from './scripts/createRuntimeChannels';
 import {executeWebpack} from './webpack/executeWebpack';
 import {getProjectConfig} from './utils/getProjectConfig';
-import {startIntegrationRunner} from './testUtils/runner';
+import {startIntegrationRunner} from './testing/runner';
 import getModuleRoot from './utils/getModuleRoot';
 
 /**
