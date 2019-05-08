@@ -57,14 +57,18 @@ program.command('zip')
  */
 program.command('check')
     .description('Checks the project for linting issues.')
-    .action(checkCommandProcess);
+    .action(() => {
+        runEsLintCommand(false);
+    });
 
 /**
  * ESLint Fix
  */
 program.command('fix')
     .description('Checks the project for linting issues, and fixes issues wherever possible.')
-    .action(fixCommandProcess);
+    .action(() => {
+        runEsLintCommand(true);
+    });
 
 /**
  * Typedoc command
@@ -155,25 +159,14 @@ async function buildCommandProcess(args: BuildCommandArgs) {
 }
 
 /**
- * Starts the eslint check process
+ * Executes ESlint, optionally executing the fix flag.
  */
-function checkCommandProcess() {
+function runEsLintCommand(fix: boolean) {
     const eslintCmd = path.resolve('./node_modules/.bin/eslint');
     const eslintConfig = path.join(getModuleRoot(), '/.eslintrc.json');
-    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx --config "${eslintConfig}"`;
+    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx ${fix ? '--fix' : ''} --config "${eslintConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
-
-/**
- * Starts the eslint fix process
- */
-function fixCommandProcess() {
-    const eslintCmd = path.resolve('./node_modules/.bin/eslint');
-    const eslintConfig = path.join(getModuleRoot(), '/.eslintrc.json');
-    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx --fix --config "${eslintConfig}"`;
-    childprocess.execSync(cmd, {stdio: 'inherit'});
-}
-
 
 /**
  * Generates typedoc
