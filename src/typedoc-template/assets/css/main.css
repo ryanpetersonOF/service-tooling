@@ -860,3 +860,7 @@ img { max-width: 100%; }
   font-size: 48px;
   font-weight: 200;
 }
+
+.tsd-sources {
+  display: none;
+}
