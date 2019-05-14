@@ -96,7 +96,7 @@ program.command('test:int')
     .option('-f, --filter <filter>', 'Only runs tests whose names match the given pattern.')
     .option('-m, --customMiddlewarePath <path>', 'Path to a custom middleware js file')
     .option('-x, --extraArgs <extraArgs...>', 'Any extra arguments to pass on to jest')
-    .option('-c, --color', 'Colors the jest terminal output text', true)
+    .option('-c, --noColor', 'Disables the color for the jest terminal output text', true)
     .action(runIntegrationTests);
 
 /**
