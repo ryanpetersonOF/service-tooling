@@ -123,7 +123,7 @@ function runIntegrationTests(args: CLITestArguments){
         fileNames: args.fileNames && (args.fileNames as unknown as string).split(' ').map(testFileName => `${testFileName}.inttest.ts`) || [],
         customMiddlewarePath: args.customMiddlewarePath && path.resolve(args.customMiddlewarePath) || undefined,
         runtime: args.runtime,
-        color: args.color === undefined ? false : true,
+        noColor: args.noColor === undefined ? false : true,
         extraArgs: args.extraArgs && (args.extraArgs as unknown as string).split(' ') || []
     };
     startIntegrationRunner(sanitizedArgs);

@@ -47,7 +47,7 @@ export function startIntegrationRunner(args: CLITestArguments) {
     /**
      * Pushes in the colors argument if requested
      */
-    if (args.color){
+    if (!args.noColor){
         jestArgs.push('--colors');
     }
 

@@ -81,9 +81,9 @@ export interface CLITestArguments extends CLIArguments {
     customMiddlewarePath?: string;
 
     /**
-     * Sets color for terminal output.
+     * Disables color for terminal output.
      */
-    color?: boolean;
+    noColor?: boolean;
 }
 
 /**
