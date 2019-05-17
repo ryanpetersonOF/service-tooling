@@ -45,6 +45,11 @@ export interface CLIArguments {
      * Sets the runtime version to be used in place of values in loaded app.json files.
      */
     runtime?: string;
+
+    /**
+     * Any extra arguments which will be passed on to Jest/runner but not processed by any methods of this service.
+     */
+    extraArgs?: string[];
 }
 
 export type BuildCommandArgs = {
@@ -55,3 +60,33 @@ export type BuildCommandArgs = {
  * Available modes for webpack to run against.
  */
 export type WebpackMode = 'development'|'production'|'none';
+
+/**
+ * Acceptable arguments to use when running integration tests (test:int)
+ */
+export interface CLITestArguments extends CLIArguments {
+    /**
+     * Only runs tests whose names match the given pattern.
+     */
+    filter?: string;
+
+    /**
+     * Runs all tests in the given file.
+     */
+    fileNames?: string[];
+
+    /**
+     * Path to file for any express custom middlewares required for testing.
+     */
+    customMiddlewarePath?: string;
+
+    /**
+     * Disables color for terminal output.
+     */
+    noColor?: boolean;
+}
+
+/**
+ * The possibilities for type of test Jest is running.  Unit or Integration.
+ */
+export type JestMode = 'int'|'unit';
