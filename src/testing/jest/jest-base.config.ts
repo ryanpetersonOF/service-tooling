@@ -1,4 +1,5 @@
 import {join} from 'path';
+import {existsSync} from 'fs';
 
 import {getRootDirectory} from '../../utils/getRootDirectory';
 import {getJsonFileSync} from '../../utils/getJsonFile';
@@ -70,13 +71,14 @@ export function createConfig(testType: JestMode) {
  */
 function getCustomJestConfig(type: JestMode) {
     let customConfig = {};
-    const jestIntConfigPath = join(getRootDirectory(), `/test/jest-${type}.config.json`);
+    const jestConfigPath = join(getRootDirectory(), `/test/jest-${type}.config.json`);
 
     try {
-        customConfig = getJsonFileSync(jestIntConfigPath);
-        console.log(`Using custom Jest ${type} configuration from ${jestIntConfigPath}`);
+        if (existsSync(jestConfigPath)) {
+            customConfig = getJsonFileSync(jestConfigPath);
+        }
     } catch (e) {
-        console.log(`No custom Jest ${type} configuration found at ${jestIntConfigPath}`);
+        console.log(e);
     }
 
     return customConfig;

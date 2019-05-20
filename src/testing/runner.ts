@@ -1,16 +1,15 @@
+import * as path from 'path';
+import * as os from 'os';
+
+import * as execa from 'execa';
+import {launch} from 'hadouken-js-adapter';
+
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {createServer, startServer, createDefaultMiddleware} from '../server/server';
 import {CLITestArguments} from '../types';
 import getModuleRoot from '../utils/getModuleRoot';
 
-const path = require('path');
-const os = require('os');
-
-const execa = require('execa');
-const {launch} = require('hadouken-js-adapter');
-
 let port: number;
-
 
 const cleanup = async (res: any) => {
     if (os.platform().match(/^win/)) {
@@ -28,62 +27,32 @@ const fail = (err: string) => {
     process.exit(1);
 };
 
-const run = (...args: any[]) => {
-    const p = execa(...args);
+const run = (processName: string, args?: any[], execaOptions?: execa.Options) => {
+    const p = execa(processName, args, execaOptions);
     p.stdout.pipe(process.stdout);
     p.stderr.pipe(process.stderr);
     return p;
 };
 
-export function startIntegrationRunner(args: CLITestArguments) {
-    const jestArgs = [
+export function runIntegrationTests(customJestArgs: string[], cliArgs: CLITestArguments) {
+    const jestArgs = customJestArgs.concat([
         '--config',
         path.join(getModuleRoot(), '/testing/jest/jest-int.config.js'),
         '--forceExit',
         '--no-cache',
         '--runInBand'
-    ];
-
-    /**
-     * Pushes in the colors argument if requested
-     */
-    if (!args.noColor){
-        jestArgs.push('--colors');
-    }
-
-    /**
-     * Pushes in any file names provided
-     */
-    if (args.fileNames) {
-        jestArgs.push(...args.fileNames);
-    }
-
-    /**
-     * Pushes in the requested filter
-     */
-    if (args.filter) {
-        jestArgs.push(args.filter);
-    }
-
-    /**
-     * Adds any extra arguments to the end
-     */
-    if (args.extraArgs) {
-        jestArgs.push(...args.extraArgs);
-    }
+    ]);
 
     createServer()
         .then(async app => {
-            if (args.customMiddlewarePath) {
-                console.log(`Using custom middleware from file ${args.customMiddlewarePath}.`);
-                await require(args.customMiddlewarePath)(app);
-            } else {
-                console.log('No custom middleware loaded.');
+            if (cliArgs.customMiddlewarePath) {
+                await require(cliArgs.customMiddlewarePath)(app);
             }
+
             return app;
         })
         .then(app => {
-            return createDefaultMiddleware(app, args);
+            return createDefaultMiddleware(app, cliArgs);
         })
         .then(startServer)
         .then(async () => {
@@ -92,8 +61,20 @@ export function startIntegrationRunner(args: CLITestArguments) {
             return port;
         })
         .catch(fail)
-        .then(OF_PORT => run('jest', jestArgs, {env: {OF_PORT}}))
+        .then(OF_PORT => run('jest', jestArgs, {env: {OF_PORT: (OF_PORT as Number).toString()}}))
         .then(cleanup)
         .catch(cleanup);
+}
+
+export function runUnitTests(customJestArgs: string[]) {
+    const jestArgs = customJestArgs.concat([
+        '--config',
+        path.join(getModuleRoot(), '/testing/jest/jest-unit.config.js')
+    ]);
+
+    run('jest', jestArgs)
+        .then((res: any) => {
+            process.exit((res.failed===true) ? 1 : 0);
+        });
 }
 
