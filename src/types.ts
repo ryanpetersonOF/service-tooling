@@ -45,11 +45,6 @@ export interface CLIArguments {
      * Sets the runtime version to be used in place of values in loaded app.json files.
      */
     runtime?: string;
-
-    /**
-     * Any extra arguments which will be passed on to Jest/runner but not processed by any methods of this service.
-     */
-    extraArgs?: string[];
 }
 
 export type BuildCommandArgs = {
@@ -84,6 +79,11 @@ export interface CLITestArguments extends CLIArguments {
      * Disables color for terminal output.
      */
     noColor?: boolean;
+
+    /**
+     * Any extra arguments which will be passed on to Jest/runner but not processed by any methods of this service.
+     */
+    extraArgs?: string[];
 }
 
 /**

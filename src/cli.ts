@@ -5,12 +5,12 @@ import * as path from 'path';
 import * as program from 'commander';
 
 import {startServer, createServer, startApplication, createDefaultMiddleware} from './server/server';
-import {CLIArguments, BuildCommandArgs, CLITestArguments} from './types';
+import {CLIArguments, BuildCommandArgs, CLITestArguments, JestMode} from './types';
 import {createProviderZip} from './scripts/createProviderZip';
 import {createRuntimeChannels} from './scripts/createRuntimeChannels';
 import {executeWebpack} from './webpack/executeWebpack';
 import {getProjectConfig} from './utils/getProjectConfig';
-import {startIntegrationRunner} from './testing/runner';
+import {runIntegrationTests, runUnitTests} from './testing/runner';
 import getModuleRoot from './utils/getModuleRoot';
 
 /**
@@ -78,26 +78,19 @@ program.command('docs')
     .action(generateTypedoc);
 
 /**
- * Unit tests command
+ * Jest commands
  */
-program.command('test:unit')
-    .description('Runs all unit tests for the extending project.')
-    .action(runUnitTests);
-
-/**
- * Integration tests command
- */
-program.command('test:int')
-    .description('Runs all integration tests for the extending project.')
+program.command('test <type>')
+    .description('Runs all jest tests for the provided type.  Type may be "int" or "unit"')
     .option('-r, --runtime <version>', 'Sets the runtime version.  Options: stable | w.x.y.z')
     .option('-e, --mode <mode>', 'Sets the webpack mode.  Defaults to "development".  Options: development | production | none', 'development')
     .option('-s, --static', 'Launches the server and application using pre-built files.', true)
     .option('-n, --fileNames <fileNames...>', 'Runs all tests in the given file.')
     .option('-f, --filter <filter>', 'Only runs tests whose names match the given pattern.')
-    .option('-m, --customMiddlewarePath <path>', 'Path to a custom middleware js file')
+    .option('-m, --customMiddlewarePath <path>', 'Path to a custom middleware js file.  Only applicable for Integration tests.')
     .option('-x, --extraArgs <extraArgs...>', 'Any extra arguments to pass on to jest')
     .option('-c, --noColor', 'Disables the color for the jest terminal output text', true)
-    .action(runIntegrationTests);
+    .action(startTestRunner);
 
 /**
  * Process CLI commands
@@ -110,9 +103,9 @@ if (program.args.length === 0) {
 }
 
 /**
- * Handles the integration test command.
+ * Initiator for the jest int/unit tests
  */
-function runIntegrationTests(args: CLITestArguments){
+function startTestRunner(type: JestMode, args: CLITestArguments) {
     const sanitizedArgs: CLITestArguments = {
         providerVersion: 'testing',
         noDemo: true,
@@ -120,13 +113,50 @@ function runIntegrationTests(args: CLITestArguments){
         mode: args.mode || 'development',
         static: args.static === undefined ? false : true,
         filter: args.filter ? `--testNamePattern=${args.filter}` : '',
-        fileNames: args.fileNames && (args.fileNames as unknown as string).split(' ').map(testFileName => `${testFileName}.inttest.ts`) || [],
+        fileNames: args.fileNames && (args.fileNames as unknown as string).split(' ').map(testFileName => `${testFileName}.${type}test.ts`) || [],
         customMiddlewarePath: args.customMiddlewarePath && path.resolve(args.customMiddlewarePath) || undefined,
         runtime: args.runtime,
         noColor: args.noColor === undefined ? false : true,
         extraArgs: args.extraArgs && (args.extraArgs as unknown as string).split(' ') || []
     };
-    startIntegrationRunner(sanitizedArgs);
+
+    const jestArgs = [];
+
+    /**
+     * Pushes in the colors argument if requested
+     */
+    if (!sanitizedArgs.noColor){
+        jestArgs.push('--colors');
+    }
+
+    /**
+     * Pushes in any file names provided
+     */
+    if (sanitizedArgs.fileNames) {
+        jestArgs.push(...sanitizedArgs.fileNames);
+    }
+
+    /**
+     * Pushes in the requested filter
+     */
+    if (sanitizedArgs.filter) {
+        jestArgs.push(sanitizedArgs.filter);
+    }
+
+    /**
+     * Adds any extra arguments to the end
+     */
+    if (sanitizedArgs.extraArgs) {
+        jestArgs.push(...sanitizedArgs.extraArgs);
+    }
+
+    if (type === 'int') {
+        runIntegrationTests(jestArgs, sanitizedArgs);
+    } else if (type ==='unit') {
+        runUnitTests(jestArgs);
+    } else {
+        console.log('Invalid test type.  Use "int" or "unit"');
+    }
 }
 
 /**
@@ -180,17 +210,5 @@ function generateTypedoc() {
         './src/client/tsconfig.json'
     ].map(filePath => path.resolve(filePath));
     const cmd = `"${typedocCmd}" --name "OpenFin ${config.SERVICE_TITLE}" --theme "${themeDir}" --out "${outDir}" --excludeNotExported --excludePrivate --excludeProtected --hideGenerator --tsconfig "${tsConfig}" --readme none`; // eslint-disable-line
-    childprocess.execSync(cmd, {stdio: 'inherit'});
-}
-
-/**
- * Runs unit tests
- */
-function runUnitTests(){
-    const [jestCmd, jestUnitConfig] = [
-        './node_modules/.bin/jest',
-        `${getModuleRoot()}/testing/jest/jest-unit.config.js`
-    ].map(filePath => path.resolve(filePath));
-    const cmd = `"${jestCmd}" --config "${jestUnitConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
