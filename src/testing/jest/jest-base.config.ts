@@ -17,6 +17,7 @@ export function createConfig(testType: JestMode) {
         transform: {
             '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest'
         },
+        testRunner: 'jest-circus/runner',
         testRegex: `\\.${testType === 'int' ? 'inttest' : 'unittest'}\\.ts$`,
         modulePaths: [
             '<rootDir>/node_modules'
