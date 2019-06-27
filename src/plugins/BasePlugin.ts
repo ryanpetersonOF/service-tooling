@@ -4,7 +4,18 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 import * as mkdirp from 'mkdirp';
 
-export class BasePlugin {
+interface BaseOptions {
+    outputPath: string;
+    input: string|string[];
+}
+
+export type PluginSpec<T> = {
+    [K in keyof T]: T[K]|((value: T[K]) => any);
+}
+
+export type PluginOptions<T> = T & BaseOptions;
+
+export abstract class BasePlugin<T> {
     /**
      * Supported options:
      * - outputPath: string
@@ -23,7 +34,8 @@ export class BasePlugin {
     private firstRun: boolean;
     private inputExt: string;
     private outputExt: string;
-    private options: any;
+
+    protected options!: PluginOptions<T>;
 
     constructor(name: string, outputExtension: string, options: any) {
         if (!name) {
@@ -35,7 +47,7 @@ export class BasePlugin {
         this.outputExt = outputExtension || this.inputExt;
 
         // Ensure required options were passed-in
-        this.parseOptions(options, {
+        this.parseOptions<BaseOptions>(options, {
             input: (value: string|string[]) => {
                 // Normalise input from string|string[] to string[]
                 if (typeof value === 'string') {
@@ -64,19 +76,13 @@ export class BasePlugin {
         });
     }
 
-    async run() {
-        // Override in derived classes.
-        // This is where the actual plugin action is performed.
-    }
+    public abstract async run(): Promise<void>;
 
-    parseOptions(options: any, spec: any) {
-        const optionNames = Object.keys(spec);
+    protected parseOptions<O = PluginOptions<T>>(options: {} & O, spec: PluginSpec<O>) {
+        const optionNames: (keyof O)[] = Object.keys(spec) as (keyof O)[];
+        const parsedOptions: any = {};
 
         // Options will be built-up gradually as each input is validated
-        if (!this.hasOwnProperty('options')) {
-            this.options = {};
-        }
-
         optionNames.forEach((optionName) => {
             const specType = typeof spec[optionName];
 
@@ -84,22 +90,25 @@ export class BasePlugin {
                 throw new Error(`Required option ${optionName} not specified`);
             } else if (specType === 'function') {
                 // Use callback to parse/validate argument. Callback should throw if value isn't valid.
-                const value = this.options[optionName] || options[optionName];
-                const ret = spec[optionName](value);
+                const value = parsedOptions[optionName] || options[optionName];
+                const ret = (spec[optionName] as Function)(value);
 
-                this.options[optionName] = (ret !== undefined) ? ret : value;
+                parsedOptions[optionName] = (ret !== undefined) ? ret : value;
             } else if (specType !== 'string') {
                 throw new Error('Invalid plugin spec');
+                // @ts-ignore
             } else if (typeof options[optionName] !== spec[optionName]) {
                 throw new Error(`Required option ${optionName} is of incorrect type. Expected ${spec[optionName]}, got ${typeof options[optionName]}.`);
             } else {
                 // Option is valid
-                this.options[optionName] = options[optionName];
+                parsedOptions[optionName] = options[optionName];
             }
         });
+
+        this.options = parsedOptions;
     }
 
-    getOutputPath(inputFilename: string) {
+    protected getOutputPath(inputFilename: string) {
         const options = this.options;
 
         if (path.extname(options.outputPath)) {
@@ -111,7 +120,38 @@ export class BasePlugin {
         }
     }
 
-    async createDirectory(fullPath: string) {
+
+    protected async writeFile(fullPath: string, contents: any) {
+        await this.createDirectory(fullPath);
+        await new Promise((resolve, reject) => {
+            fs.writeFile(fullPath, contents, 'utf8', (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    protected apply(compiler: webpack.Compiler) {
+        compiler.hooks.beforeCompile.tapPromise(this.name, (compilationParams) => {
+            // Only build schemas once per webpack invocation
+            if (!this.firstRun) {
+                return Promise.resolve();
+            } else {
+                this.firstRun = false;
+            }
+
+            const promise = this.run();
+            if (!this.isPromiseLike(promise)) {
+                throw new Error(`The run() method of plugin '${this.name}' must return a promise`);
+            }
+            return promise;
+        });
+    }
+
+    private async createDirectory(fullPath: string) {
         // Normalise file/dir path to dir path
         const isFilename = (path.extname(fullPath) !== '');
         if (isFilename) {
@@ -129,42 +169,11 @@ export class BasePlugin {
         });
     }
 
-    async writeFile(fullPath: string, contents: any) {
-        await this.createDirectory(fullPath);
-        await new Promise((resolve, reject) => {
-            fs.writeFile(fullPath, contents, 'utf8', (err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-            });
-        });
-    }
-
-    apply(compiler: webpack.Compiler) {
-        compiler.hooks.beforeCompile.tapPromise(this.name, (compilationParams) => {
-            // Only build schemas once per webpack invocation
-            if (!this.firstRun) {
-                return Promise.resolve();
-            } else {
-                this.firstRun = false;
-            }
-
-            const promise = this.run();
-            if (!this.isPromiseLike(promise)) {
-                throw new Error(`The run() method of plugin '${this.name}' must return a promise`);
-            }
-            return promise;
-        });
-    }
-
-    isPromiseLike(runResult: any) {
+    private isPromiseLike(runResult: any) {
         return runResult
-           && (typeof runResult === 'object')
+        && (typeof runResult === 'object')
            && runResult.then !== undefined
            && (typeof runResult.then === 'function');
     }
 }
 
-module.exports = BasePlugin;
