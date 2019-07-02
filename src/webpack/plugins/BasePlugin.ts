@@ -69,14 +69,14 @@ export abstract class BasePlugin<T> {
             outputPath: (value: string) => {
                 if (typeof value !== 'string') {
                     throw new Error('Required option outputPath not specified');
-                } else if (options.input.length > 1 && path.extname(value) !== '') {
+                } else if (this.options.input.length > 1 && path.extname(value) !== '') {
                     throw new Error('Multiple input files were provided, outputPath must be a directory');
                 }
             }
         });
     }
 
-    public abstract async run(): Promise<void>;
+    public abstract async run(action?: string): Promise<void>;
 
     protected parseOptions<O = PluginOptions<T>>(options: {} & O, spec: PluginSpec<O>) {
         const optionNames: (keyof O)[] = Object.keys(spec) as (keyof O)[];
@@ -103,9 +103,9 @@ export abstract class BasePlugin<T> {
                 // Option is valid
                 parsedOptions[optionName] = options[optionName];
             }
-        });
 
-        this.options = parsedOptions;
+            this.options = {...this.options, ...parsedOptions};
+        });
     }
 
     protected getOutputPath(inputFilename: string) {
