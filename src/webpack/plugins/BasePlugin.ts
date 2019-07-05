@@ -5,7 +5,15 @@ import * as webpack from 'webpack';
 import * as mkdirp from 'mkdirp';
 
 interface BaseOptions {
+    /**
+     * Where to write any output files to, either a filename or a directory.
+     * If a directory, filenames will be appended based on the input file with the extension changed.
+     */
     outputPath: string;
+    /**
+     * The JSON Schema file(s) to process using this plugin.
+     * If passing multiple files, then 'outputPath' MUST be a directory rather than an absolute filename.
+     */
     input: string|string[];
 }
 
@@ -15,21 +23,11 @@ export type PluginSpec<T> = {
 
 export type PluginOptions<T> = T & BaseOptions;
 
+/**
+ * Base class for creating runnable plugins.  When extending you will need to implement your own `run` method
+ * which will be called on webpack compile or invoked via CLI.
+ */
 export abstract class BasePlugin<T> {
-    /**
-     * Supported options:
-     * - outputPath: string
-     *   Where to write any output files to, either a filename or a directory.
-     *   If a directory, filenames will be appended based on the input file with the extension changed.
-     * - input: string|string[]
-     *   The JSON Schema file(s) to process using this plugin.
-     *   If passing multiple files, then 'outputPath' MUST be a directory rather than an absolute filename.
-     *
-     * @param name The unique name of this plugin. Will appear in webpack output.
-     * @param outputExtension The default file extension to use when writing files from this plugin. If only writing a single file, can be overridden by using an absolute path as outputPath option
-     * @param options Object containing options passed-in from webpack config. See comments on BasePlugin and derived classes for list of supported options.
-     */
-
     private name: string;
     private firstRun: boolean;
     private inputExt: string;
@@ -37,6 +35,11 @@ export abstract class BasePlugin<T> {
 
     protected options!: PluginOptions<T>;
 
+    /**
+     * @param name The unique name of this plugin. Will appear in webpack output.
+     * @param outputExtension The default file extension to use when writing files from this plugin. If only writing a single file, can be overridden by using an absolute path as outputPath option
+     * @param options Object containing options passed-in from webpack config. See comments on BasePlugin and derived classes for list of supported options.
+     */
     constructor(name: string, outputExtension: string, options: any) {
         if (!name) {
             throw new Error('Plugin name is required');
