@@ -12,6 +12,7 @@ import {executeWebpack} from './webpack/executeWebpack';
 import {getProjectConfig} from './utils/getProjectConfig';
 import {runIntegrationTests, runUnitTests} from './testing/runner';
 import getModuleRoot from './utils/getModuleRoot';
+import {executeAllPlugins} from './webpack/plugins/pluginExecutor';
 
 /**
  * Start command
@@ -93,6 +94,13 @@ program.command('test <type>')
     .action(startTestRunner);
 
 /**
+ * Executes plugins
+ */
+program.command('plugins [action]')
+    .description('Executes all runnable plugins with the supplied action')
+    .action(startPluginExecutor);
+
+/**
  * Process CLI commands
  */
 program.parse(process.argv);
@@ -100,6 +108,10 @@ program.parse(process.argv);
 // If program was called with no arguments, show help
 if (program.args.length === 0) {
     program.help();
+}
+
+function startPluginExecutor(action?: string) {
+    return executeAllPlugins(action);
 }
 
 /**
