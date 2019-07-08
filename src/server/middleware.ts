@@ -137,7 +137,7 @@ export function createCustomManifestMiddleware(): RequestHandler {
                 service.manifestUrl = getProviderUrl(provider);
             }
             if (config) {
-                service.config = JSON.parse(config);
+                service.config = JSON.parse(config!);
             }
             manifest.services = [service];
         }
