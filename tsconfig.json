@@ -4,7 +4,8 @@
         "sourceMap": false,
         "rootDir": "src",
         "outDir": "dist",
-        "esModuleInterop": false
+        "esModuleInterop": false,
+        "declaration": true
     },
     "include": [
         "src"

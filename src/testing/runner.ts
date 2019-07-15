@@ -10,8 +10,9 @@ import {CLITestArguments} from '../types';
 import getModuleRoot from '../utils/getModuleRoot';
 
 let port: number;
+let success: boolean = false;
 
-const cleanup = async (res: any) => {
+const cleanup = () => {
     if (os.platform().match(/^win/)) {
         const cmd = 'taskkill /F /IM openfin.exe /T';
         execa.shellSync(cmd);
@@ -19,12 +20,10 @@ const cleanup = async (res: any) => {
         const cmd = `lsof -n -i4TCP:${port} | grep LISTEN | awk '{ print $2 }' | xargs kill`;
         execa.shellSync(cmd);
     }
-    process.exit((res.failed===true) ? 1 : 0);
 };
 
-const fail = (err: string) => {
-    console.error(err);
-    process.exit(1);
+const exit = () => {
+    process.exit(success ? 0 : 1);
 };
 
 const run = (processName: string, args?: any[], execaOptions?: execa.Options) => {
@@ -60,10 +59,16 @@ export function runIntegrationTests(customJestArgs: string[], cliArgs: CLITestAr
             console.log('Openfin running on port ' + port);
             return port;
         })
-        .catch(fail)
+        .catch((error) => {
+            console.error(error);
+            throw new Error();
+        })
         .then(OF_PORT => run('jest', jestArgs, {env: {OF_PORT: (OF_PORT as Number).toString()}}))
+        .then(res => success = !res.failed)
         .then(cleanup)
-        .catch(cleanup);
+        .catch(cleanup)
+        .then(exit)
+        .catch(exit);
 }
 
 export function runUnitTests(customJestArgs: string[]) {
