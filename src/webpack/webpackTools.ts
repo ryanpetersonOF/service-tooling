@@ -76,7 +76,7 @@ export const manifestPlugin = (() => {
         from: './res/provider/app.json',
         to: '.',
         transform: (content) => {
-            const config = JSON.parse(content);
+            const config = JSON.parse(content.toString());
 
             if (typeof process.env.SERVICE_VERSION !== 'undefined' && process.env.SERVICE_VERSION !== '') {
                 config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';

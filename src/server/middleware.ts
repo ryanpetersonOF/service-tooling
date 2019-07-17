@@ -37,10 +37,11 @@ export function createAppJsonMiddleware(providerVersion: string, runtimeVersion?
         // Parse app.json
         const config: ManifestFile|void = await getJsonFile<ManifestFile>(path.resolve('res', configPath)).catch(next);
 
-        if (!config) {
+        if (!config || !config.startup_app) {
+            next();
             return;
         }
-
+        console.log(config);
         const serviceDefinition = (config.services || []).find(service => service.name === SERVICE_NAME);
         const startupUrl = config.startup_app.url;
 
