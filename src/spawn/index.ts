@@ -1,28 +1,30 @@
 // TODO: Extract this util into service-tooling (SERVICE-531)
-
 import {Identity, Application} from 'openfin/_v2/main';
 import {ChannelClient} from 'openfin/_v2/api/interappbus/channel/client';
 import {_Window} from 'openfin/_v2/api/window/window';
 import {ApplicationOption} from 'openfin/_v2/api/application/applicationOption';
 import {WindowOption} from 'openfin/_v2/api/window/windowOption';
+import {ConfigWithRules} from 'openfin-service-config';
 
-type Dictionary<T = string> = {
+let defaultUrl = 'about:blank';
+
+export type Dictionary<T = string> = {
     [key: string]: T
 };
 
-interface Point<T = number> {
+export interface Point<T = number> {
     x: T;
     y: T;
 }
 
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
 /**
  * Higher-level abstraction of 'fin.WindowOptions'.
  *
  * Any fields not specified will be filled-in with default values.
  */
-interface WindowData {
+export interface WindowData {
     /**
      * When creating an application, the mainWindow's UUID & name. When creating a window, the window name.
      *
@@ -88,7 +90,7 @@ interface WindowData {
  *
  * Any fields not specified will be filled-in with default values.
  */
-interface AppData extends WindowData {
+export interface AppData<C = unknown> extends WindowData {
     type?: 'manifest'|'programmatic';
 
     /**
@@ -102,6 +104,11 @@ interface AppData extends WindowData {
      * Has no effect if `useService` is false.
      */
     provider?: string;
+
+    /**
+     * Config object to include within the manifest. May also contain rules.
+     */
+    config?: ConfigWithRules<C>|null;
 
     /**
      * Runtime version, can be a release channel name or an explicit version number.
@@ -119,6 +126,13 @@ interface AppData extends WindowData {
      * Defaults to true, as service wouldn't otherwise be able to access the window.
      */
     enableMesh?: boolean;
+}
+
+/**
+ * Sets the default URL used when creating new windows or applications.
+ */
+export function setDefaultUrl(url: string) {
+    defaultUrl = url;
 }
 
 /**
@@ -200,7 +214,7 @@ async function createApplication(options: Omit<AppData, 'parent'>): Promise<Appl
             provider: options.provider || 'local'
         };
 
-        const manifest = `http://localhost:3922/manifest?${
+        const manifest = `http://${location.host}/manifest?${
             Object.keys(queryOptions)
                 .map(key => {
                     return `${key}=${encodeURIComponent(queryOptions[key].toString())}`;
@@ -230,7 +244,7 @@ async function startApp(appPromise: Promise<Application>): Promise<Application> 
 
 function getUrl(options: WindowData): string {
     // Create URL from base URL + queryArgs
-    let url = options.url || 'http://localhost:3922/demo/app.html';
+    let url = options.url || defaultUrl;
     const urlQueryParams = options.queryArgs || {};
     const urlQueryKeys = Object.keys(urlQueryParams);
 
