@@ -41,7 +41,7 @@ export function createAppJsonMiddleware(providerVersion: string, runtimeVersion?
             next();
             return;
         }
-        console.log(config);
+
         const serviceDefinition = (config.services || []).find(service => service.name === SERVICE_NAME);
         const startupUrl = config.startup_app.url;
 
