@@ -1,12 +1,9 @@
-// TODO: Extract this util into service-tooling (SERVICE-531)
 import {Identity, Application} from 'openfin/_v2/main';
 import {ChannelClient} from 'openfin/_v2/api/interappbus/channel/client';
 import {_Window} from 'openfin/_v2/api/window/window';
 import {ApplicationOption} from 'openfin/_v2/api/application/applicationOption';
 import {WindowOption} from 'openfin/_v2/api/window/windowOption';
 import {ConfigWithRules} from 'openfin-service-config';
-
-let defaultUrl = 'about:blank';
 
 export type Dictionary<T = string> = {
     [key: string]: T
@@ -33,7 +30,7 @@ export interface WindowData {
     id?: string;
 
     /**
-     * URL of the window. Defaults to the standard test app.
+     * URL of the window. Defaults to about:blank.
      */
     url?: string;
 
@@ -129,13 +126,6 @@ export interface AppData<C = unknown> extends WindowData {
 }
 
 /**
- * Sets the default URL used when creating new windows or applications.
- */
-export function setDefaultUrl(url: string) {
-    defaultUrl = url;
-}
-
-/**
  * Creates an IAB channel that is used to listen for app/window spawn requests from other windows/applications. A call
  * to this method is required for a window to be used as the `parent` arg in a call to `createApp` or `createWindow`.
  *
@@ -210,16 +200,18 @@ async function createApplication(options: Omit<AppData, 'parent'>): Promise<Appl
             realmName: options.realm || '',
             enableMesh: options.enableMesh || false,
             runtime: options.runtime || await fin.System.getVersion(),
-            useService: options.useService !== undefined ? options.useService : false,
-            provider: options.provider || 'local'
+            useService: options.useService !== undefined ? options.useService : true,
+            provider: options.provider || 'local',
+            config: options.config ? JSON.stringify(options.config) : ''
         };
 
-        const manifest = `http://${location.host}/manifest?${
-            Object.keys(queryOptions)
-                .map(key => {
-                    return `${key}=${encodeURIComponent(queryOptions[key].toString())}`;
-                })
-                .join('&')}`;
+        const manifest = `http://localhost:
+            ${typeof location !== 'undefined' ? location.port : require(`${process.cwd()}/services.config.json`).PORT}/manifest?${
+    Object.keys(queryOptions)
+        .map(key => {
+            return `${key}=${encodeURIComponent(queryOptions[key].toString())}`;
+        })
+        .join('&')}`;
 
         return startApp(fin.Application.createFromManifest(manifest));
     }
@@ -244,12 +236,12 @@ async function startApp(appPromise: Promise<Application>): Promise<Application> 
 
 function getUrl(options: WindowData): string {
     // Create URL from base URL + queryArgs
-    let url = options.url || defaultUrl;
+    let url = options.url || 'about:blank';
     const urlQueryParams = options.queryArgs || {};
     const urlQueryKeys = Object.keys(urlQueryParams);
 
     // Resolve relative URL's
-    if (url.indexOf('://') === -1) {
+    if (url.indexOf('://') === -1 && url !== 'about:blank') {
         // No protocol, assume relative URL and resolve against location.href
         url = new URL(url, location.href).href;
     }
