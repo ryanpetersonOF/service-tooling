@@ -205,13 +205,22 @@ async function createApplication(options: Omit<AppData, 'parent'>): Promise<Appl
             config: options.config ? JSON.stringify(options.config) : ''
         };
 
-        const manifest = `http://localhost:
-            ${typeof location !== 'undefined' ? location.port : require(`${process.cwd()}/services.config.json`).PORT}/manifest?${
-    Object.keys(queryOptions)
-        .map(key => {
-            return `${key}=${encodeURIComponent(queryOptions[key].toString())}`;
-        })
-        .join('&')}`;
+        let hostname = 'http://localhost:';
+
+        // This can be run in a window or node context. We need to grab the port number from either.
+        if (typeof window !== 'undefined') {
+            hostname += location.port;
+        } else {
+            const {getProjectConfig} = await import('../utils/getProjectConfig');
+            hostname += getProjectConfig().PORT;
+        }
+
+        const manifest = `${hostname}/manifest?${
+            Object.keys(queryOptions)
+                .map(key => {
+                    return `${key}=${encodeURIComponent(queryOptions[key].toString())}`;
+                })
+                .join('&')}`;
 
         return startApp(fin.Application.createFromManifest(manifest));
     }

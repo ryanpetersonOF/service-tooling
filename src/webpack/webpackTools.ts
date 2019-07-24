@@ -38,6 +38,9 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
         optimization: {minimize: !options || options.minify !== false},
         output: {path: outPath, filename: `${options && options.outputFilename || '[name]-bundle'}.js`},
         resolve: {extensions: ['.ts', '.tsx', '.js']},
+        node: {
+            fs: 'empty'
+        },
         module: {
             rules: [
                 {test: /\.css$/, loader: 'style-loader'},
