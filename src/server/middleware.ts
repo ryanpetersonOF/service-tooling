@@ -37,7 +37,8 @@ export function createAppJsonMiddleware(providerVersion: string, runtimeVersion?
         // Parse app.json
         const config: ManifestFile|void = await getJsonFile<ManifestFile>(path.resolve('res', configPath)).catch(next);
 
-        if (!config) {
+        if (!config || !config.startup_app) {
+            next();
             return;
         }
 
