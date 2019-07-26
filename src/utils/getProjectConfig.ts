@@ -1,6 +1,5 @@
 import {existsSync, readFileSync} from 'fs';
 
-
 /**
  * Shape of the configuration file which is implemented in an extending project.
  */

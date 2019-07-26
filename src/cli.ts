@@ -137,7 +137,7 @@ function startTestRunner(type: JestMode, args: CLITestArguments) {
     /**
      * Pushes in the colors argument if requested
      */
-    if (!sanitizedArgs.noColor){
+    if (!sanitizedArgs.noColor) {
         jestArgs.push('--colors');
     }
 

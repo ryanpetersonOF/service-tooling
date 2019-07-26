@@ -22,7 +22,6 @@ type serviceDeclaration = {
     config?: {}
 };
 
-
 /**
  * Creates express-compatible middleware function that will add/replace any URL's found within app.json files according
  * to the command-line options of this utility.
@@ -63,8 +62,6 @@ export function createAppJsonMiddleware(providerVersion: string, runtimeVersion?
         res.send(JSON.stringify(config, null, 4));
     };
 }
-
-
 
 /**
  * Creates express-compatible middleware function to generate custom application manifests.

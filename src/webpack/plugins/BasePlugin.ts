@@ -123,7 +123,6 @@ export abstract class BasePlugin<T> {
         }
     }
 
-
     protected async writeFile(fullPath: string, contents: any) {
         await this.createDirectory(fullPath);
         await new Promise((resolve, reject) => {
