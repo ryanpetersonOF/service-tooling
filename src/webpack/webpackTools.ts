@@ -38,6 +38,14 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
         optimization: {minimize: !options || options.minify !== false},
         output: {path: outPath, filename: `${options && options.outputFilename || '[name]-bundle'}.js`},
         resolve: {extensions: ['.ts', '.tsx', '.js']},
+        /**
+            Webpack will try and bundle fs but because it is node it flags an error of not found.
+            We are ok to set it as empty as fs will never be used in a window context anyway.
+            Roots from the spawn utils where context can change between windows and node.
+         */
+        node: {
+            fs: 'empty'
+        },
         module: {
             rules: [
                 {test: /\.css$/, loader: 'style-loader'},
