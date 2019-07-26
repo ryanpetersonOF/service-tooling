@@ -5,9 +5,7 @@ import {ApplicationOption} from 'openfin/_v2/api/application/applicationOption';
 import {WindowOption} from 'openfin/_v2/api/window/windowOption';
 import {ConfigWithRules} from 'openfin-service-config';
 
-export type Dictionary<T = string> = {
-    [key: string]: T
-};
+export type Dictionary<T = string> = Record<string, T>;
 
 export interface Point<T = number> {
     x: T;
@@ -249,7 +247,7 @@ function getUrl(options: WindowData): string {
     const urlQueryParams = options.queryArgs || {};
     const urlQueryKeys = Object.keys(urlQueryParams);
 
-    // Resolve relative URL's
+    // Resolve relative URLs
     if (url.indexOf('://') === -1 && url !== 'about:blank') {
         // No protocol, assume relative URL and resolve against location.href
         url = new URL(url, location.href).href;
