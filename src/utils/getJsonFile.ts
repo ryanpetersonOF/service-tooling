@@ -4,15 +4,15 @@ import * as path from 'path';
 /**
  * Returns the contents of the provided JSON file.
  */
-export function getJsonFile<T>(filePath: string): Promise<T> {
+export async function getJsonFile<T>(filePath: string): Promise<T> {
     // Check that the file exists locally
     if (!fs.existsSync(filePath)) {
-        Promise.reject(new Error(`${filePath} file not found in project root.  Please check ${filePath} exists.`));
+        throw new Error(`${filePath} file not found in project root.  Please check ${filePath} exists.`);
     }
 
     // Check it is a .json file
     if (!path.extname(filePath).length || path.extname(filePath) !== '.json') {
-        Promise.reject(new Error(`${filePath} is not a .json file`));
+        throw new Error(`${filePath} is not a .json file`);
     }
 
     return new Promise((resolve, reject) => {
@@ -26,10 +26,10 @@ export function getJsonFile<T>(filePath: string): Promise<T> {
                     if (config) {
                         resolve(config);
                     } else {
-                        reject(new Error(`No data found in ${filePath}`));
+                        throw new Error(`No data found in ${filePath}`);
                     }
                 } catch (e) {
-                    reject(e);
+                    throw new Error(e);
                 }
             }
         });
