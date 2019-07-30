@@ -1,8 +1,8 @@
 import {platform} from 'os';
 
+import fetch from 'node-fetch';
 import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
-import * as fetch from 'node-fetch';
 
 import {CLIArguments} from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
@@ -84,7 +84,7 @@ export async function startApplication(args: CLIArguments) {
         const manifestPath = 'demo/app.json';
         const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
-        const fetchRequest = await fetch.default(getProviderUrl(args.providerVersion)).catch((err: string) => {
+        const fetchRequest = await fetch(getProviderUrl(args.providerVersion)).catch((err: string) => {
             throw new Error(err);
         });
 
