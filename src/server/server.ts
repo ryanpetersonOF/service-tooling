@@ -1,8 +1,8 @@
 import {platform} from 'os';
 
+import fetch from 'node-fetch';
 import * as express from 'express';
 import {connect, launch} from 'hadouken-js-adapter';
-import * as fetch from 'node-fetch';
 
 import {CLIArguments} from '../types';
 import {getProjectConfig} from '../utils/getProjectConfig';
@@ -34,7 +34,7 @@ export async function createServer() {
 export async function createDefaultMiddleware(app: express.Express, args: CLIArguments) {
     // Add special route for any 'app.json' files - will re-write the contents
     // according to the command-line arguments of this server
-    app.use(/\/?(.*app\.json)/, createAppJsonMiddleware(args.providerVersion, args.runtime));
+    app.use(/\/?(.*\.json)/, createAppJsonMiddleware(args.providerVersion, args.runtime));
 
     // Add endpoint for creating new application manifests from scratch.
     // Used within demo app for lauching 'custom' applications
@@ -84,7 +84,7 @@ export async function startApplication(args: CLIArguments) {
         const manifestPath = 'demo/app.json';
         const manifestUrl = `http://localhost:${PORT}/${manifestPath}`;
 
-        const fetchRequest = await fetch.default(getProviderUrl(args.providerVersion)).catch((err: string) => {
+        const fetchRequest = await fetch(getProviderUrl(args.providerVersion)).catch((err: string) => {
             throw new Error(err);
         });
 

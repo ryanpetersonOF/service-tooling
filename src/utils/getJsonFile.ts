@@ -4,7 +4,7 @@ import * as path from 'path';
 /**
  * Returns the contents of the provided JSON file.
  */
-export function getJsonFile<T>(filePath: string): Promise<T> {
+export async function getJsonFile<T>(filePath: string): Promise<T> {
     // Check that the file exists locally
     if (!fs.existsSync(filePath)) {
         throw new Error(`${filePath} file not found in project root.  Please check ${filePath} exists.`);
@@ -29,7 +29,7 @@ export function getJsonFile<T>(filePath: string): Promise<T> {
                         throw new Error(`No data found in ${filePath}`);
                     }
                 } catch (e) {
-                    reject(e);
+                    throw new Error(e);
                 }
             }
         });

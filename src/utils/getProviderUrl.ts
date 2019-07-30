@@ -1,4 +1,8 @@
+import {existsSync} from 'fs';
+import {join} from 'path';
+
 import {getProjectConfig} from './getProjectConfig';
+import {getRootDirectory} from './getRootDirectory';
 
 let url: string|null = null;
 
@@ -26,8 +30,14 @@ export function getProviderUrl(version: string, manifestUrl?: string) {
         // Use the latest staging build
         return url = `${CDN_LOCATION}/app.staging.json${query}`;
     } else if (version === 'testing') {
-        // Use the testing provider
-        return url = `http://localhost:${PORT}/test/provider.json${query}`;
+        // Use the optional testing provider if exists.
+        const testingProviderResponse = existsSync(join(getRootDirectory(), 'res/test/provider.json'));
+
+        if (testingProviderResponse) {
+            return url = `http://localhost:${PORT}/test/provider.json${query}`;
+        } else {
+            return url = `http://localhost:${PORT}/provider/app.json${query}`;
+        }
     } else if (/\d+\.\d+\.\d+/.test(version)) {
         // Use a specific public release of the service
         return url = `${CDN_LOCATION}/${version}/app.json${query}`;

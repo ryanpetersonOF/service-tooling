@@ -38,6 +38,14 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
         optimization: {minimize: !options || options.minify !== false},
         output: {path: outPath, filename: `${options && options.outputFilename || '[name]-bundle'}.js`},
         resolve: {extensions: ['.ts', '.tsx', '.js']},
+        /**
+            Webpack will try and bundle fs but because it is node it flags an error of not found.
+            We are ok to set it as empty as fs will never be used in a window context anyway.
+            Roots from the spawn utils where context can change between windows and node.
+         */
+        node: {
+            fs: 'empty'
+        },
         module: {
             rules: [
                 {test: /\.css$/, loader: 'style-loader'},
@@ -76,7 +84,7 @@ export const manifestPlugin = (() => {
         from: './res/provider/app.json',
         to: '.',
         transform: (content) => {
-            const config = JSON.parse(content);
+            const config = JSON.parse(content.toString());
 
             if (typeof process.env.SERVICE_VERSION !== 'undefined' && process.env.SERVICE_VERSION !== '') {
                 config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';
@@ -89,7 +97,6 @@ export const manifestPlugin = (() => {
         }
     }]);
 })();
-
 
 /**
  * Replaces 'PACKAGE_VERSION' constant in source files with the current version of the service,
