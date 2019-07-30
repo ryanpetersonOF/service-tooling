@@ -1,6 +1,5 @@
 import {existsSync, readFileSync} from 'fs';
 
-
 // tslint:disable-next-line: no-any - Its the package.json.  We have no type for that!
 let packageJson: any = null;
 

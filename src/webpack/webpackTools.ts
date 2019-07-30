@@ -98,7 +98,6 @@ export const manifestPlugin = (() => {
     }]);
 })();
 
-
 /**
  * Replaces 'PACKAGE_VERSION' constant in source files with the current version of the service,
  * taken from the 'package.json' file.
