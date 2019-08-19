@@ -10,21 +10,16 @@ interface SocketServerOptions {
 }
 
 export function createSocketServer(options: SocketServerOptions) {
-    console.log('creating wss');
     if (options.useExisting && existingServer) {
-        console.log('using existing');
         return existingServer;
     } else {
-        console.log('using new');
         return existingServer = new WebSocketServer({port: WSS_DEFAULT_PORT});
     }
 }
 
 export function createWebpackEventHandlers(compiler: webpack.MultiCompiler, wss: WebSocketServer) {
     wss.on('connection', (ws) => {
-        console.log('wss connected');
         compiler.hooks.done.tap('DoneHook', () => {
-            console.log(1);
             ws.send(JSON.stringify({type: 'done'}));
         });
 
