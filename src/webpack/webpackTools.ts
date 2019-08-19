@@ -1,4 +1,5 @@
 import * as CopyWebpackPlugin from 'copy-webpack-plugin';
+import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as webpack from 'webpack';
 
 import {getProjectConfig} from '../utils/getProjectConfig';
@@ -27,17 +28,24 @@ export interface CustomWebpackOptions extends webpack.Options.Optimization {
      * Allows a custom output file name to be used instead of the default [name]-bundle.js
      */
     outputFilename?: string;
+
+    /**
+     * Allows CSS to be extracted into a seperate file. If this is not specified, CSS will be bundled in the javascript bundle.
+     */
+    extractStyles?: boolean | string;
 }
 
 /**
  * Shared function to create a webpack config for an entry point
  */
-export function createConfig(outPath: string, entryPoint: string, options: CustomWebpackOptions, ...plugins: webpack.Plugin[]) {
+
+export function createConfig(outPath: string, entryPoint: string | webpack.Entry, options?: CustomWebpackOptions, ...plugins: webpack.Plugin[]) {
+    const extractCss = (options) ? !!options.extractStyles : false;
     const config: webpack.Configuration = {
         entry: entryPoint,
         optimization: {minimize: !options || options.minify !== false},
         output: {path: outPath, filename: `${options && options.outputFilename || '[name]-bundle'}.js`},
-        resolve: {extensions: ['.ts', '.tsx', '.js']},
+        resolve: {extensions: ['.ts', '.tsx', '.js', '.scss']},
         /**
             Webpack will try and bundle fs but because it is node it flags an error of not found.
             We are ok to set it as empty as fs will never be used in a window context anyway.
@@ -48,9 +56,38 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
         },
         module: {
             rules: [
-                {test: /\.css$/, loader: 'style-loader'},
-                {test: /\.css$/, loader: 'css-loader'},
-                {test: /\.module.css$/, loader: 'css-loader', query: {modules: true, localIdentName: '[name]__[local]___[hash:base64:5]'}},
+                {
+                    test: /\.module\.(sc|sa|c)ss$/,
+                    loader: [
+                        finalCssLoader(extractCss),
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                localIdentName: '[name]__[local]___[hash:base64:5]',
+                                camelCase: true,
+                                sourceMap: true
+                            }
+                        },
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                                sourceMap: true
+                            }
+                        }
+                    ]
+                },
+                {
+                    test: /\.(sc|sa|c)ss$/,
+                    exclude: /\.module.(s(a|c)ss)$/,
+                    loader: [
+                        finalCssLoader(extractCss),
+                        'css-loader',
+                        {
+                            loader: 'sass-loader'
+                        }
+                    ]
+                },
                 {test: /\.(png|jpg|gif|otf|svg)$/, use: [{loader: 'url-loader', options: {limit: 8192}}]},
                 {test: /\.tsx?$/, loader: 'ts-loader'}
             ]
@@ -66,8 +103,16 @@ export function createConfig(outPath: string, entryPoint: string, options: Custo
         }
         config.output!.libraryTarget = 'umd';
     }
+
     if (plugins && plugins.length) {
         config.plugins!.push.apply(config.plugins, plugins);
+    }
+
+    if (extractCss) {
+        const name = options!.extractStyles!;
+        config.plugins!.push(new MiniCssExtractPlugin({
+            filename: (typeof name === 'string') ? `${name}.css` : '[name].css'
+        }));
     }
 
     return config;
@@ -97,6 +142,22 @@ export const manifestPlugin = (() => {
         }
     }]);
 })();
+
+/**
+ * Selects the way CSS should be bundled with the JS or extracted into a CSS file
+ * @param extract if true the styles will be extracted.
+ */
+const finalCssLoader = (extract: boolean) => {
+    const styleLoader = {
+        loader: 'style-loader',
+        options: {
+            attributes: {id: 'stylesheet'},
+            injectType: 'singletonStyleTag'
+        }
+    };
+
+    return extract ? MiniCssExtractPlugin.loader : styleLoader;
+};
 
 /**
  * Replaces 'PACKAGE_VERSION' constant in source files with the current version of the service,
