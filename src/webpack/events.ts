@@ -6,13 +6,13 @@ import {WSS_DEFAULT_PORT} from '../constants';
 const eventEmitter = new EventEmitter();
 
 export const WebpackEvents = {
-    on<T extends keyof webpack.compilation.MultiCompilerHooks>(type: T, callback: () => void) {
+    on<T extends keyof webpack.compilation.MultiCompilerHooks>(type: T, callback: (type: T) => void) {
         const ws = new WebSocket(`ws://localhost:${WSS_DEFAULT_PORT}`);
 
         eventEmitter.addListener(type.toUpperCase(), callback);
 
         ws.onmessage = function(message: MessageEvent) {
-            eventEmitter.emit(JSON.parse(message.data).type.toUpperCase());
+            eventEmitter.emit(JSON.parse(message.data).type);
         };
     }
 };
