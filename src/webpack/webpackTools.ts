@@ -88,7 +88,8 @@ export function createConfig(outPath: string, entryPoint: string | webpack.Entry
                         }
                     ]
                 },
-                {test: /\.(png|jpg|gif|otf|svg)$/, use: [{loader: 'url-loader', options: {limit: 8192}}]},
+                {test: /\.(otf|woff2?)$/, use: [{loader: 'url-loader', options: {limit: 50000}}]},
+                {test: /\.(png|jpg|gif|svg)$/, use: [{loader: 'url-loader', options: {limit: 8192}}]},
                 {test: /\.tsx?$/, loader: 'ts-loader'}
             ]
         },
