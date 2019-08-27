@@ -6,6 +6,7 @@ import * as webpackDevMiddleware from 'webpack-dev-middleware';
 
 import {WebpackMode} from '../types';
 import {getRootDirectory} from '../utils/getRootDirectory';
+import {createSocketServer, createWebpackEventHandlers} from '../server/websocket';
 
 /**
  * Executes Webpack.  Doubles as express-compatible middleware function to serve webpack modules.
@@ -23,6 +24,9 @@ export async function executeWebpack(mode: WebpackMode, writeToDisk: boolean): P
 
         // Create express middleware
         const compiler = webpack(config);
+
+        createWebpackEventHandlers(compiler, createSocketServer({useExisting: true}));
+
         const middleware = webpackDevMiddleware(compiler, {publicPath: '/', writeToDisk});
 
         // Wait until initial build has finished before starting application

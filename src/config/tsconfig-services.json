@@ -17,7 +17,8 @@
         "types": ["node", "openfin"],
         "jsx": "react",
         "declaration": false,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "experimentalDecorators": true
     },
     "exclude": [
         "node_modules"
