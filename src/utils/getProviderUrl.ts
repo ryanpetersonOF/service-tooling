@@ -21,8 +21,13 @@ export function getProviderUrl(version: string, manifestUrl?: string) {
     const query = manifestUrl && index >= 0 ? manifestUrl.substr(index) : '';
 
     if (version === 'local') {
-        // Provider is running locally
-        return url = `http://localhost:${PORT}/provider/app.json${query}`;
+        const demoProviderResponse = existsSync(join(getRootDirectory(), 'res/demo/provider.json'));
+
+        if (demoProviderResponse) {
+            return url = `http://localhost:${PORT}/demo/provider.json${query}`;
+        } else {
+            return url = `http://localhost:${PORT}/provider/app.json${query}`;
+        }
     } else if (version === 'stable') {
         // Use the latest stable version
         return url = `${CDN_LOCATION}/app.json${query}`;
@@ -38,12 +43,12 @@ export function getProviderUrl(version: string, manifestUrl?: string) {
         } else {
             return url = `http://localhost:${PORT}/provider/app.json${query}`;
         }
-    } else if (/\d+\.\d+\.\d+/.test(version)) {
-        // Use a specific public release of the service
-        return url = `${CDN_LOCATION}/${version}/app.json${query}`;
     } else if (version.indexOf('://') > 0) {
         // Looks like an absolute URL to an app.json file
         return url = version;
+    } else if (/\d+\.\d+\.\d+/.test(version)) {
+        // Use a specific public release of the service
+        return url = `${CDN_LOCATION}/${version}/app.json${query}`;
     } else {
         throw new Error(`Not a valid version number or channel: ${version}`);
     }
