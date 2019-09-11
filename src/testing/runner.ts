@@ -72,14 +72,13 @@ export function runIntegrationTests(customJestArgs: string[], cliArgs: CLITestAr
 }
 
 export function runUnitTests(customJestArgs: string[]) {
+    function onComplete(res: any) {
+        process.exit((res.failed === true) ? 1 : 0);
+    }
     const jestArgs = customJestArgs.concat([
         '--config',
         path.join(getModuleRoot(), '/testing/jest/jest-unit.config.js')
     ]);
 
-    run('jest', jestArgs)
-        .then((res: any) => {
-            process.exit((res.failed===true) ? 1 : 0);
-        });
+    run('jest', jestArgs).then(onComplete, onComplete);
 }
-
