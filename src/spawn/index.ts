@@ -89,6 +89,16 @@ export interface AppData<C = unknown> extends WindowData {
     type?: 'manifest'|'programmatic';
 
     /**
+     * Name of the application
+     */
+    name?: string;
+
+    /**
+     * Name of the application shortcut
+     */
+    shortcutName?: string;
+
+    /**
      * If the application's manifest should declare a 'services' section containing the current project's service.
      */
     useService?: boolean;
@@ -169,11 +179,12 @@ async function createApplication(options: Omit<AppData, 'parent'>): Promise<Appl
     const position = getWindowPosition(options);
     const size = getWindowSize(options);
     const state = options.state || 'normal';
+    const name = options.name || uuid;
 
     if (options.type === 'programmatic') {
         const data: ApplicationOption = {
             uuid,
-            name: uuid,
+            name,
             mainWindowOptions: {
                 ...position,
                 url,
@@ -190,8 +201,10 @@ async function createApplication(options: Omit<AppData, 'parent'>): Promise<Appl
         const queryOptions: Dictionary<string|number|boolean> = {
             ...position as Required<typeof position>,
             uuid,
+            name,
             url,
             state,
+            shortcutName: options.shortcutName || '',
             defaultWidth: size.x,
             defaultHeight: size.y,
             frame: options.frame === undefined ? true : options.frame,

@@ -83,9 +83,11 @@ export function createCustomManifestMiddleware(): RequestHandler {
             return;
         }
 
+        const randomId = Math.random().toString(36).substr(2, 4);
         const query: {[key: string]: string} = req.query;
         const {
             uuid,
+            name,
             url,
             frame,
             defaultCentered,
@@ -99,10 +101,12 @@ export function createCustomManifestMiddleware(): RequestHandler {
             useService,
             provider,
             config,
-            licenseKey
+            licenseKey,
+            shortcut
         } = {
             // Set default values
-            uuid: `demo-app-${Math.random().toString(36).substr(2, 4)}`,
+            uuid: `test-app-${randomId}`,
+            name: `Openfin Test App ${randomId}`,
             url: `http://localhost:${PORT}/demo/testbed/index.html`,
             runtime: defaultConfig.runtime.version,
             provider: 'local',
@@ -121,15 +125,21 @@ export function createCustomManifestMiddleware(): RequestHandler {
             defaultTop: Number.parseInt(req.query.defaultTop, 10) || 605,
             defaultWidth: Number.parseInt(req.query.defaultWidth, 10) || 860,
             defaultHeight: Number.parseInt(req.query.defaultHeight, 10) || 605,
-            licenseKey: defaultConfig.licenseKey
+            licenseKey: defaultConfig.licenseKey,
+            shortcut: req.query.shortcutName ? {
+                'company': 'OpenFin',
+                'icon': 'openfin-test-icon.ico',
+                'name': req.query.shortcutName
+            } : undefined
         };
 
         const manifest = {
             licenseKey,
             startup_app:
-                {uuid, name: uuid, url, frame, autoShow: true, saveWindowState: false, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight},
+                {uuid, name, url, frame, autoShow: true, saveWindowState: false, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight},
             runtime: {arguments: '--v=1' + (realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''), version: runtime},
-            services: {}
+            services: {},
+            shortcut
         };
         if (useService) {
             const service: serviceDeclaration = {name: `${SERVICE_NAME}`};
