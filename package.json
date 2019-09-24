@@ -1,6 +1,6 @@
 {
   "name": "openfin-service-tooling",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -55,6 +55,7 @@
     "node-fetch": "^2.6.0",
     "node-sass": "^4.12.0",
     "rimraf": "^2.6.3",
+    "sass-jest": "^0.1.7",
     "sass-loader": "^7.1.0",
     "style-loader": "^1.0.0",
     "ts-jest": "^24",
