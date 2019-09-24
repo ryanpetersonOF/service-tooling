@@ -70,7 +70,7 @@ export async function startServer(app: express.Express) {
  * Default for starting a project application.  This will wire up the close detection of applications as well.
  */
 export async function startApplication(args: CLIArguments) {
-    const {PORT} = getProjectConfig();
+    const {PORT, SERVICE_NAME} = getProjectConfig();
     // Manually start service on Mac OS (no RVM support)
     if (platform() === 'darwin') {
         console.log('Starting Provider for Mac OS');
@@ -92,7 +92,7 @@ export async function startApplication(args: CLIArguments) {
             const providerManifestContent = await fetchRequest.json();
             console.log('Launching application');
 
-            connect({uuid: 'wrapper', manifestUrl}).then(async fin => {
+            connect({uuid: `wrapper-${SERVICE_NAME}`, manifestUrl}).then(async fin => {
                 const service =
                     fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
 
