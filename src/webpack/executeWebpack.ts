@@ -18,8 +18,9 @@ import {createSocketServer, createWebpackEventHandlers} from '../server/websocke
 export async function executeWebpack(mode: WebpackMode, writeToDisk: boolean): Promise<RequestHandler> {
     return new Promise<RequestHandler>((resolve) => {
         // Load config and set development mode
-        const config: webpack.Configuration[] = require(getRootDirectory() + '/webpack.config.js');
+        const config: webpack.Configuration[] = require(`${getRootDirectory()}/webpack.config.js`);
 
+        // eslint-disable-next-line
         config.forEach((entry: webpack.Configuration) => entry.mode = (entry.mode || mode));
 
         // Create express middleware
@@ -36,14 +37,14 @@ export async function executeWebpack(mode: WebpackMode, writeToDisk: boolean): P
             const results = result as unknown as {stats: webpack.Stats[]};
 
             // Output build times
-            const buildTimes = results.stats.map(stat => {
+            const buildTimes = results.stats.map((stat) => {
                 const component = path.relative(getRootDirectory(), stat.compilation.outputOptions.path);
                 return `${component}: ${(stat.endTime!.valueOf() - stat.startTime!.valueOf()) / 1000}s`;
             });
             console.log(`\nInitial build complete after ${(Date.now() - startTime) / 1000} seconds\n    ${buildTimes.join('\n    ')}\n`);
 
             // Check build status
-            if (results.stats.find(stats => stats.compilation.errors.length > 0)) {
+            if (results.stats.find((stats) => stats.compilation.errors.length > 0)) {
                 console.error('Build failed. See output above.');
                 process.exit(1);
             } else {

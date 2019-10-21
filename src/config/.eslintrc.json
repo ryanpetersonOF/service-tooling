@@ -19,7 +19,7 @@
             "jsx": true
         },
         "ecmaVersion": 2018,
-        "project": ["./tsconfig.json", "./src/**/tsconfig.json", "./test/**/tsconfig.json"],
+        "project": ["./tsconfig.json", "./src/**/tsconfig.json", "./test/**/tsconfig.json", "./demo/**/tsconfig.json"],
         "sourceType": "module"
     },
     "plugins": [
@@ -121,7 +121,7 @@
             }
         ],
         "@typescript-eslint/no-use-before-define": "off",
-        "@typescript-eslint/no-var-requires": "error",
+        "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-readonly": "error",

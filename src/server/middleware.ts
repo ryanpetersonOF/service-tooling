@@ -9,18 +9,19 @@ import {getProviderUrl} from '../utils/getProviderUrl';
 /**
  * Quick implementation on the app.json, for the pieces we use.
  */
-type ManifestFile = {
-    licenseKey: string,
-    startup_app: {url: string, uuid: string, name: string},
-    runtime: {arguments: string, version: string}
-    services?: serviceDeclaration[]
-};
+interface ManifestFile {
+    licenseKey: string;
+    // eslint-disable-next-line
+    startup_app: {url: string; uuid: string; name: string};
+    runtime: {arguments: string; version: string};
+    services?: ServiceDeclaration[];
+}
 
-type serviceDeclaration = {
-    name: string,
-    manifestUrl?: string,
-    config?: {}
-};
+interface ServiceDeclaration {
+    name: string;
+    manifestUrl?: string;
+    config?: {};
+}
 
 /**
  * Creates express-compatible middleware function that will add/replace any URL's found within app.json files according
@@ -44,7 +45,7 @@ export function createAppJsonMiddleware(providerVersion: string, runtimeVersion?
             return;
         }
 
-        const serviceDefinition = (config.services || []).find(service => service.name === SERVICE_NAME);
+        const serviceDefinition = (config.services || []).find((service) => service.name === SERVICE_NAME);
         const startupUrl = config.startup_app.url;
 
         // Edit manifest
@@ -126,23 +127,26 @@ export function createCustomManifestMiddleware(): RequestHandler {
             defaultWidth: Number.parseInt(req.query.defaultWidth, 10) || 860,
             defaultHeight: Number.parseInt(req.query.defaultHeight, 10) || 605,
             licenseKey: defaultConfig.licenseKey,
-            shortcut: req.query.shortcutName ? {
-                'company': 'OpenFin',
-                'icon': 'openfin-test-icon.ico',
-                'name': req.query.shortcutName
-            } : undefined
+            shortcut: req.query.shortcutName
+                ? {
+                    'company': 'OpenFin',
+                    'icon': 'openfin-test-icon.ico',
+                    'name': req.query.shortcutName
+                }
+                : undefined
         };
 
         const manifest = {
             licenseKey,
+            // eslint-disable-next-line
             startup_app:
                 {uuid, name, url, frame, autoShow: true, saveWindowState: false, defaultCentered, defaultLeft, defaultTop, defaultWidth, defaultHeight},
-            runtime: {arguments: '--v=1' + (realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''), version: runtime},
+            runtime: {arguments: `--v=1${realmName ? ` --security-realm=${realmName}${enableMesh ? ' --enable-mesh' : ''}` : ''}`, version: runtime},
             services: {},
             shortcut
         };
         if (useService) {
-            const service: serviceDeclaration = {name: `${SERVICE_NAME}`};
+            const service: ServiceDeclaration = {name: `${SERVICE_NAME}`};
 
             if (provider !== 'default') {
                 service.manifestUrl = getProviderUrl(provider);

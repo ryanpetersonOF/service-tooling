@@ -1,4 +1,3 @@
-import {normalize} from 'path';
 
 /**
  * Cached root directory
@@ -13,5 +12,6 @@ export function getRootDirectory() {
         return rootDirectory;
     }
 
-    return rootDirectory = process.cwd();
+    rootDirectory = process.cwd();
+    return rootDirectory;
 }

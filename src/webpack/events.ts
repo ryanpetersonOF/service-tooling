@@ -11,7 +11,7 @@ export const WebpackEvents = {
 
         eventEmitter.addListener(type.toUpperCase(), callback);
 
-        ws.onmessage = function(message: MessageEvent) {
+        ws.onmessage = function (message: MessageEvent) {
             eventEmitter.emit(JSON.parse(message.data).type);
         };
     }
