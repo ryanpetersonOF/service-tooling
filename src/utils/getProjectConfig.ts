@@ -20,7 +20,7 @@ let config: ConfigFile|null = null;
 /**
  * Returns the config json for the extending project.
  */
-export function getProjectConfig(): ConfigFile|null {
+export function getProjectConfig(): ConfigFile {
     if (config) {
         return config;
     }
