@@ -209,7 +209,7 @@ async function buildCommandProcess(args: BuildCommandArgs) {
 function runEsLintCommand(fix: boolean, cache: boolean) {
     const eslintCmd = path.resolve('./node_modules/.bin/eslint');
     const eslintConfig = path.join(getModuleRoot(), '/.eslintrc.json');
-    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx ${fix ? '--fix' : ''} ${cache ? '--cache' : ''}--config "${eslintConfig}"`;
+    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx ${fix ? '--fix' : ''} ${cache ? '--cache' : ''} --config "${eslintConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
 
