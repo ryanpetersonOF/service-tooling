@@ -15,5 +15,6 @@ export function getProjectPackageJson() {
         throw new Error('Package.json file not found in project root.  Please check ./package.json exists.');
     }
 
-    return packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
+    packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
+    return packageJson;
 }

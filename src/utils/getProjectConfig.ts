@@ -30,5 +30,6 @@ export function getProjectConfig(): ConfigFile {
         throw new Error(`Config file not found in project root.  Please check ${CONFIG_FILE_PATH} exists.`);
     }
 
-    return config = JSON.parse(readFileSync(CONFIG_FILE_PATH, 'utf8'));
+    config = JSON.parse(readFileSync(CONFIG_FILE_PATH, 'utf8'));
+    return config;
 }

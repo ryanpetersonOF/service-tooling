@@ -13,7 +13,7 @@ let port: number;
 let success: boolean = false;
 
 const cleanup = () => {
-    if (os.platform().match(/^win/)) {
+    if (/^win/.exec(os.platform())) {
         const cmd = 'taskkill /F /IM openfin.exe /T';
         execa.shellSync(cmd);
     } else {
@@ -43,28 +43,30 @@ export function runIntegrationTests(customJestArgs: string[], cliArgs: CLITestAr
     ]);
 
     createServer()
-        .then(async app => {
+        .then(async (app) => {
             if (cliArgs.customMiddlewarePath) {
                 await require(cliArgs.customMiddlewarePath)(app);
             }
 
             return app;
         })
-        .then(app => {
+        .then((app) => {
             return createDefaultMiddleware(app, cliArgs);
         })
         .then(startServer)
         .then(async () => {
-            const port = await launch({manifestUrl: `http://localhost:${getProjectConfig().PORT}/test/test-app-main.json`});
-            console.log('Openfin running on port ' + port);
+            port = await launch({manifestUrl: `http://localhost:${getProjectConfig().PORT}/test/test-app-main.json`});
+            console.log(`Openfin running on port ${port}`);
             return port;
         })
         .catch((error) => {
             console.error(error);
             throw new Error();
         })
-        .then(OF_PORT => run('jest', jestArgs, {env: {OF_PORT: (OF_PORT as Number).toString()}}))
-        .then(res => success = !res.failed)
+        .then((OF_PORT) => run('jest', jestArgs, {env: {OF_PORT: (OF_PORT as number).toString()}}))
+        .then((res) => {
+            success = !res.failed;
+        })
         .then(cleanup)
         .catch(cleanup)
         .then(exit)

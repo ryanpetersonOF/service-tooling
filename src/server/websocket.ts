@@ -13,7 +13,8 @@ export function createSocketServer(options: SocketServerOptions) {
     if (options.useExisting && existingServer) {
         return existingServer;
     } else {
-        return existingServer = new WebSocketServer({port: WSS_DEFAULT_PORT});
+        existingServer = new WebSocketServer({port: WSS_DEFAULT_PORT});
+        return existingServer;
     }
 }
 

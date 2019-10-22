@@ -37,7 +37,7 @@ export function createConfig(testType: JestMode) {
             [
                 'jest-junit', {
                     'outputDirectory': '<rootDir>/dist/test',
-                    'outputName': 'results-' + testType + '.xml',
+                    'outputName': `results-${testType}.xml`,
                     'classNameTemplate': (vars: any) => {
                         const filePathTokens = vars.filepath.split('\\');
 
@@ -45,12 +45,12 @@ export function createConfig(testType: JestMode) {
                         fileName = fileName.split('.')[0];
                         filePathTokens[filePathTokens.length - 1] = fileName;
 
-                        return testType + '.' + filePathTokens.join('.');
+                        return `${testType}.${filePathTokens.join('.')}`;
                     },
                     'titleTemplate': (vars: any) => {
                         let title;
                         if (vars.classname) {
-                            title = vars.classname + ' > ' + vars.title;
+                            title = `${vars.classname} > ${vars.title}`;
                         } else {
                             title = vars.title;
                         }
