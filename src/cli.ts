@@ -61,7 +61,7 @@ program.command('check')
     .description('Checks the project for linting issues.')
     .option('-c, --noCache', 'Disables eslint caching', false)
     .action((args: {noCache: boolean}) => {
-        runEsLintCommand(false, !!args.noCache);
+        runEsLintCommand(false, args.noCache === undefined ? true : false);
     });
 
 /**
@@ -71,7 +71,7 @@ program.command('fix')
     .description('Checks the project for linting issues, and fixes issues wherever possible.')
     .option('-c, --noCache', 'Disables eslint caching', false)
     .action((args: {noCache: boolean}) => {
-        runEsLintCommand(true, !!args.noCache);
+        runEsLintCommand(true, args.noCache === undefined ? true : false);
     });
 
 /**
