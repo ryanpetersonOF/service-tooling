@@ -20,7 +20,7 @@ let config: ConfigFile|null = null;
 /**
  * Returns the config json for the extending project.
  */
-export function getProjectConfig(): ConfigFile|null {
+export function getProjectConfig(): ConfigFile {
     if (config) {
         return config;
     }
@@ -30,6 +30,6 @@ export function getProjectConfig(): ConfigFile|null {
         throw new Error(`Config file not found in project root.  Please check ${CONFIG_FILE_PATH} exists.`);
     }
 
-    config = JSON.parse(readFileSync(CONFIG_FILE_PATH, 'utf8'));
-    return config;
+    // eslint-disable-next-line
+    return config = JSON.parse(readFileSync(CONFIG_FILE_PATH, 'utf8'));
 }
