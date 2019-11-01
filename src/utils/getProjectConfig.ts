@@ -30,5 +30,6 @@ export function getProjectConfig(): ConfigFile {
         throw new Error(`Config file not found in project root.  Please check ${CONFIG_FILE_PATH} exists.`);
     }
 
+    // eslint-disable-next-line
     return config = JSON.parse(readFileSync(CONFIG_FILE_PATH, 'utf8'));
 }

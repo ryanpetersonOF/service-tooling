@@ -14,5 +14,7 @@ export default function getModuleRoot() {
     }
 
     // At time of writing this, the utils folder which this resides is one above root.
-    return rootDirectory = join(`${__dirname}`, '..');
+    rootDirectory = join(`${__dirname}`, '..');
+
+    return rootDirectory;
 }

@@ -41,12 +41,12 @@ export async function createDefaultMiddleware(app: express.Express, args: CLIArg
     app.use('/manifest', createCustomManifestMiddleware());
 
     // Add route for serving static resources
-    app.use(express.static(getRootDirectory() + '/res'));
+    app.use(express.static(`${getRootDirectory()}/res`));
 
     // Add route for code
     if (args.static) {
         // Run application using pre-built code (use 'npm run build' or 'npm run build:dev')
-        app.use(express.static(getRootDirectory() + '/dist'));
+        app.use(express.static(`${getRootDirectory()}/dist`));
     } else {
         // Run application using webpack-dev-middleware. Will build app before launching, and watch
         // for any source file changes
@@ -92,7 +92,7 @@ export async function startApplication(args: CLIArguments) {
             const providerManifestContent = await fetchRequest.json();
             console.log('Launching application');
 
-            connect({uuid: `wrapper-${SERVICE_NAME}`, manifestUrl}).then(async fin => {
+            connect({uuid: `wrapper-${SERVICE_NAME}`, manifestUrl}).then(async (fin) => {
                 const service =
                     fin.Application.wrapSync({uuid: `${providerManifestContent.startup_app.uuid}`, name: `${providerManifestContent.startup_app.name}`});
 

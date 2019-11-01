@@ -47,9 +47,9 @@ export interface CLIArguments {
     runtime?: string;
 }
 
-export type BuildCommandArgs = {
+export interface BuildCommandArgs {
     mode: WebpackMode;
-};
+}
 
 /**
  * Available modes for webpack to run against.

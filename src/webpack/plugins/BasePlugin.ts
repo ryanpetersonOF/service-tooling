@@ -19,7 +19,7 @@ interface BaseOptions {
 
 export type PluginSpec<T> = {
     [K in keyof T]: T[K]|((value: T[K]) => any);
-}
+};
 
 export type PluginOptions<T> = T & BaseOptions;
 
@@ -28,10 +28,10 @@ export type PluginOptions<T> = T & BaseOptions;
  * which will be called on webpack compile or invoked via CLI.
  */
 export abstract class BasePlugin<T> {
-    private name: string;
+    private readonly name: string;
     private firstRun: boolean;
-    private inputExt: string;
-    private outputExt: string;
+    private readonly inputExt: string;
+    private readonly outputExt: string;
 
     protected options!: PluginOptions<T>;
 
@@ -60,7 +60,7 @@ export abstract class BasePlugin<T> {
                 }
 
                 // Make sure all input files have expected extension
-                value.forEach(filename => {
+                value.forEach((filename) => {
                     if (!filename.endsWith(this.inputExt)) {
                         // Plugin assumes this filename format when generating output path
                         throw new Error(`Invalid schema input: ${filename}. Expecting "${this.inputExt}" file extension`);
@@ -172,10 +172,10 @@ export abstract class BasePlugin<T> {
     }
 
     private isPromiseLike(runResult: any) {
-        return runResult
-        && (typeof runResult === 'object')
-           && runResult.then !== undefined
-           && (typeof runResult.then === 'function');
+        return runResult &&
+        (typeof runResult === 'object') &&
+           runResult.then !== undefined &&
+           (typeof runResult.then === 'function');
     }
 }
 

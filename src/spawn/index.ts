@@ -228,7 +228,7 @@ async function createApplication(options: Omit<AppData, 'parent'>): Promise<Appl
 
         const manifest = `${hostname}/manifest?${
             Object.keys(queryOptions)
-                .map(key => {
+                .map((key) => {
                     return `${key}=${encodeURIComponent(queryOptions[key].toString())}`;
                 })
                 .join('&')}`;
@@ -244,7 +244,7 @@ async function createChildWindow(data: Omit<WindowData, 'parent'>): Promise<_Win
     const size = getWindowSize(data);
 
     const options:
-        WindowOption = {...position, name, url, frame: data.frame, autoShow: true, saveWindowState: false, defaultWidth: size.x, defaultHeight: size.y};
+    WindowOption = {...position, name, url, frame: data.frame, autoShow: true, saveWindowState: false, defaultWidth: size.x, defaultHeight: size.y};
     return fin.Window.create(options);
 }
 
@@ -268,7 +268,7 @@ function getUrl(options: WindowData): string {
 
     // Add-on querystring arguments
     const queryParams: string[] = [];
-    Object.keys(urlQueryParams).forEach(param => {
+    Object.keys(urlQueryParams).forEach((param) => {
         const value = urlQueryParams[param];
         if (value) {
             queryParams.push(`${param}=${encodeURIComponent(typeof value === 'object' ? JSON.stringify(value) : value.toString())}`);
@@ -305,7 +305,7 @@ function getWindowPosition(options: WindowData): {defaultCentered?: boolean; def
 
 function getWindowSize(options: WindowData): Point {
     return {
-        x: (options.size && options.size.x || 400) * (1 + (Math.random() * (options.sizeOffset || 0))),
-        y: (options.size && options.size.y || 300) * (1 + (Math.random() * (options.sizeOffset || 0)))
+        x: ((options.size && options.size.x) || 400) * (1 + (Math.random() * (options.sizeOffset || 0))),
+        y: ((options.size && options.size.y) || 300) * (1 + (Math.random() * (options.sizeOffset || 0)))
     };
 }

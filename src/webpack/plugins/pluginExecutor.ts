@@ -12,11 +12,11 @@ type Plugin = BasePlugin<any> | webpack.Plugin;
  * without using webpack.
  */
 export async function executeAllPlugins(action?: string) {
-    const webpackConfig: webpack.Configuration[] = require(getRootDirectory() + '/webpack.config.js');
+    const webpackConfig: webpack.Configuration[] = require(`${getRootDirectory()}/webpack.config.js`);
 
     // Run all found plugins (outside of webpack - will generate code without any other build steps)
     await Promise.all(webpackConfig.reduce((accum: Plugin[], step) => step.plugins ? accum.concat(step.plugins) : accum, [])
-        .map(plugin => executePlugin(plugin, action)))
+        .map((plugin) => executePlugin(plugin, action)))
         .catch((err) => {
             console.error('One or more plugins failed:');
             console.error(err);

@@ -59,8 +59,9 @@ program.command('zip')
  */
 program.command('check')
     .description('Checks the project for linting issues.')
-    .action(() => {
-        runEsLintCommand(false);
+    .option('-c, --noCache', 'Disables eslint caching', false)
+    .action((args: {noCache: boolean}) => {
+        runEsLintCommand(false, args.noCache === undefined ? true : false);
     });
 
 /**
@@ -68,8 +69,9 @@ program.command('check')
  */
 program.command('fix')
     .description('Checks the project for linting issues, and fixes issues wherever possible.')
-    .action(() => {
-        runEsLintCommand(true);
+    .option('-c, --noCache', 'Disables eslint caching', false)
+    .action((args: {noCache: boolean}) => {
+        runEsLintCommand(true, args.noCache === undefined ? true : false);
     });
 
 /**
@@ -126,11 +128,11 @@ function startTestRunner(type: JestMode, args: CLITestArguments) {
         mode: args.mode || 'development',
         static: args.static === undefined ? false : true,
         filter: args.filter ? `--testNamePattern=${args.filter}` : '',
-        fileNames: args.fileNames && (args.fileNames as unknown as string).split(' ').map(testFileName => `${testFileName}.${type}test.ts`) || [],
-        customMiddlewarePath: args.customMiddlewarePath && path.resolve(args.customMiddlewarePath) || undefined,
+        fileNames: (args.fileNames && (args.fileNames as unknown as string).split(' ').map((testFileName) => `${testFileName}.${type}test.ts`)) || [],
+        customMiddlewarePath: (args.customMiddlewarePath && path.resolve(args.customMiddlewarePath)) || undefined,
         runtime: args.runtime,
         noColor: args.noColor === undefined ? false : true,
-        extraArgs: args.extraArgs && (args.extraArgs as unknown as string).split(' ') || []
+        extraArgs: (args.extraArgs && (args.extraArgs as unknown as string).split(' ')) || []
     };
 
     const jestArgs = [];
@@ -204,10 +206,10 @@ async function buildCommandProcess(args: BuildCommandArgs) {
 /**
  * Executes ESlint, optionally executing the fix flag.
  */
-function runEsLintCommand(fix: boolean) {
+function runEsLintCommand(fix: boolean, cache: boolean) {
     const eslintCmd = path.resolve('./node_modules/.bin/eslint');
     const eslintConfig = path.join(getModuleRoot(), '/.eslintrc.json');
-    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx ${fix ? '--fix' : ''} --config "${eslintConfig}"`;
+    const cmd = `"${eslintCmd}" src test --ext .ts --ext .tsx ${fix ? '--fix' : ''} ${cache ? '--cache' : ''} --config "${eslintConfig}"`;
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }
 
@@ -223,7 +225,7 @@ function generateTypedoc() {
         `${getModuleRoot()}/typedoc-template`,
         './dist/docs/api',
         './src/client/tsconfig.json'
-    ].map(filePath => path.resolve(filePath));
+    ].map((filePath) => path.resolve(filePath));
     const cmd = `"${typedocCmd}" --name "OpenFin ${config.SERVICE_TITLE}" --theme "${themeDir}" --out "${outDir}" --excludeNotExported --excludePrivate --excludeProtected --hideGenerator --tsconfig "${tsConfig}" --readme ${readme}`; // eslint-disable-line
     childprocess.execSync(cmd, {stdio: 'inherit'});
 }

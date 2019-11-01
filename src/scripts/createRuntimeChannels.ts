@@ -9,9 +9,10 @@ const RUNTIME_CHANNELS = ['stable', 'alpha', 'beta', 'canary'];
  * Creates copies of the provider's app.json file, that each point at a different runtime release channel.
  */
 export function createRuntimeChannels(): void {
+    // eslint-disable-next-line
     const manifest = require(getProviderManifestPath());
 
-    RUNTIME_CHANNELS.forEach(channel => {
+    RUNTIME_CHANNELS.forEach((channel) => {
         manifest.runtime.version = channel;
 
         const rootDir = getRootDirectory();

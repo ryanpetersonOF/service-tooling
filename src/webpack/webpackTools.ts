@@ -1,6 +1,7 @@
 import * as CopyWebpackPlugin from 'copy-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as webpack from 'webpack';
+import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 import {getProjectConfig} from '../utils/getProjectConfig';
 import {getProjectPackageJson} from '../utils/getProjectPackageJson';
@@ -38,13 +39,18 @@ export interface CustomWebpackOptions extends webpack.Options.Optimization {
 /**
  * Shared function to create a webpack config for an entry point
  */
-
 export function createConfig(outPath: string, entryPoint: string | webpack.Entry, options?: CustomWebpackOptions, ...plugins: webpack.Plugin[]) {
     const extractCss = (options) ? !!options.extractStyles : false;
     const config: webpack.Configuration = {
         entry: entryPoint,
-        optimization: {minimize: !options || options.minify !== false},
-        output: {path: outPath, filename: `${options && options.outputFilename || '[name]-bundle'}.js`},
+        optimization: {
+            noEmitOnErrors: true,
+            minimize: !options || options.minify !== false,
+            removeAvailableModules: false,
+            removeEmptyChunks: false,
+            splitChunks: false
+        },
+        output: {pathinfo: false, path: outPath, filename: `${(options && options.outputFilename) || '[name]-bundle'}.js`},
         resolve: {extensions: ['.ts', '.tsx', '.js', '.scss']},
         /**
             Webpack will try and bundle fs but because it is node it flags an error of not found.
@@ -70,10 +76,7 @@ export function createConfig(outPath: string, entryPoint: string | webpack.Entry
                             }
                         },
                         {
-                            loader: 'sass-loader',
-                            options: {
-                                sourceMap: true
-                            }
+                            loader: 'sass-loader'
                         }
                     ]
                 },
@@ -90,10 +93,30 @@ export function createConfig(outPath: string, entryPoint: string | webpack.Entry
                 },
                 {test: /\.(otf|woff2?)$/, use: [{loader: 'url-loader', options: {limit: 50000}}]},
                 {test: /\.(png|jpg|gif|svg)$/, use: [{loader: 'url-loader', options: {limit: 8192}}]},
-                {test: /\.tsx?$/, loader: 'ts-loader'}
+                {
+                    test: /\.tsx?$/,
+                    exclude: /node_modules/,
+                    use: [
+                        {
+                            loader: 'ts-loader',
+                            options: {
+                                transpileOnly: true,
+                                experimentalWatchApi: true
+                            }
+                        }
+                    ]
+                }
             ]
         },
-        plugins: []
+        plugins: [
+            new ForkTsCheckerWebpackPlugin({
+                eslint: true,
+                checkSyntacticErrors: true,
+                async: false, // Don't build if error
+                useTypescriptIncrementalApi: true,
+                formatter: 'codeframe'
+            })
+        ]
     };
 
     if (options && options.isLibrary === true) {
@@ -133,7 +156,7 @@ export const manifestPlugin = (() => {
             const config = JSON.parse(content.toString());
 
             if (typeof process.env.SERVICE_VERSION !== 'undefined' && process.env.SERVICE_VERSION !== '') {
-                config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/` + process.env.SERVICE_VERSION + '/provider.html';
+                config.startup_app.url = `https://cdn.openfin.co/services/openfin/${SERVICE_NAME}/${process.env.SERVICE_VERSION}/provider.html`;
                 config.startup_app.autoShow = false;
             } else {
                 config.startup_app.url = `http://localhost:${PORT}/provider/provider.html`;

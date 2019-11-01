@@ -5,7 +5,7 @@
         "url": "http://localhost:42319/demo/index.html",
         "uuid": "test-launcher",
         "autoShow": true,
-        "showTaskbarIcon": false,
+        "showTaskbarIcon": true,
         "defaultHeight": 400,
         "defaultWidth": 500
     },

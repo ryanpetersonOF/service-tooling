@@ -24,31 +24,39 @@ export function getProviderUrl(version: string, manifestUrl?: string) {
         const demoProviderResponse = existsSync(join(getRootDirectory(), 'res/demo/provider.json'));
 
         if (demoProviderResponse) {
-            return url = `http://localhost:${PORT}/demo/provider.json${query}`;
+            url = `http://localhost:${PORT}/demo/provider.json${query}`;
+            return url;
         } else {
-            return url = `http://localhost:${PORT}/provider/app.json${query}`;
+            url = `http://localhost:${PORT}/provider/app.json${query}`;
+            return url;
         }
     } else if (version === 'stable') {
         // Use the latest stable version
-        return url = `${CDN_LOCATION}/app.json${query}`;
+        url = `${CDN_LOCATION}/app.json${query}`;
+        return url;
     } else if (version === 'staging') {
         // Use the latest staging build
-        return url = `${CDN_LOCATION}/app.staging.json${query}`;
+        url = `${CDN_LOCATION}/app.staging.json${query}`;
+        return url;
     } else if (version === 'testing') {
         // Use the optional testing provider if exists.
         const testingProviderResponse = existsSync(join(getRootDirectory(), 'res/test/provider.json'));
 
         if (testingProviderResponse) {
-            return url = `http://localhost:${PORT}/test/provider.json${query}`;
+            url = `http://localhost:${PORT}/test/provider.json${query}`;
+            return url;
         } else {
-            return url = `http://localhost:${PORT}/provider/app.json${query}`;
+            url = `http://localhost:${PORT}/provider/app.json${query}`;
+            return url;
         }
     } else if (version.indexOf('://') > 0) {
         // Looks like an absolute URL to an app.json file
-        return url = version;
+        url = version;
+        return url;
     } else if (/\d+\.\d+\.\d+/.test(version)) {
         // Use a specific public release of the service
-        return url = `${CDN_LOCATION}/${version}/app.json${query}`;
+        url = `${CDN_LOCATION}/${version}/app.json${query}`;
+        return url;
     } else {
         throw new Error(`Not a valid version number or channel: ${version}`);
     }
