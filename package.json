@@ -1,6 +1,6 @@
 {
   "name": "openfin-service-tooling",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -56,6 +56,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "node-fetch": "^2.6.0",
     "node-sass": "^4.12.0",
+    "openfin-service-config": "^1.0.1",
     "rimraf": "^2.6.3",
     "sass-jest": "^0.1.7",
     "sass-loader": "^7.1.0",
@@ -84,7 +85,6 @@
     "glob": "^7.1.4",
     "hadouken-js-adapter": "^0.39.1",
     "mkdirp": "^0.5.1",
-    "openfin-service-config": "^1.0.1",
     "openfin-service-signal": "^1.0.0",
     "pre-commit": "^1.2.2",
     "typescript": "^3.6.4"
